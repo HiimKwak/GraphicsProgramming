@@ -1,6 +1,5 @@
-#include <windows.h>
-#include <string>
-#include <stdint.h>
+#include "Core/Win32Window.h"
+#include "Graphics/GraphicsContext.h"
 
 // 창 메시지 처리할 떄 사용
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -14,55 +13,22 @@ int main()
 
 	// 클라이언트 영역 크기
 	uint32_t width = 1280;
-	uint32_t height = 780;
+	uint32_t height = 800;
 
 	HINSTANCE hInstance = GetModuleHandle(nullptr); // 이 프로그램의 포인터를 운영체제가 구해서 넣어줌
-	// 창 생성에 필요한 정보(구조체) 채우기
-	WNDCLASS wc = { };
 
-	wc.lpfnWndProc = WindowProc;
-	wc.hInstance = hInstance; // 프로그램 포인터
-	wc.lpszClassName = className.c_str(); // wstring을 wchar 로우 포인터로 변경해주는 함수
-
-	if (!RegisterClass(&wc)) // 등록 실패 핸들
-		return 0;
-
-	/* 창 클라이언트 영역 딱 맞춰주기 */
-	RECT rect = {};
-	rect.left = 0;
-	rect.top = 0;
-	rect.right = width;
-	rect.bottom = height;
-	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
-
-	uint32_t windowWidth = rect.right - rect.left;
-	uint32_t windowHeight = rect.bottom - rect.top;
-
-	/* 창 생성 위치 가운데 고정 */
-	uint32_t positionX = (GetSystemMetrics(SM_CXSCREEN) - windowWidth) / 2;
-	uint32_t positionY = (GetSystemMetrics(SM_CYSCREEN) - windowHeight) / 2;
-
-	// Create the window.
-	HWND hwnd = CreateWindow(
-		className.c_str(),                     // Window class
-		title.c_str(),    // Window text
-		WS_OVERLAPPEDWINDOW,            // Window style
-
-		positionX, positionY, // 위치
-		windowWidth, windowHeight, // 크기
-
-		nullptr,       // Parent window    
-		nullptr,       // Menu
-		hInstance,  // Instance handle
-		nullptr        // Additional application data
+	Craft::Win32Window window( // 창 생성
+		width,
+		height,
+		hInstance,
+		WindowProc
 	);
 
-	// 창 생성 실패 시
-	if (hwnd == NULL)
-		return 0;
+	if (!window.Initialize())
+		return -1; // 초기화 실패 시 프로그램 종료
 
-
-	ShowWindow(hwnd, SW_SHOW);
+	Craft::GraphicsContext context;
+	context.Initialize(width, height, window);
 
 	// 게임 루프같은 메시지 처리 루프.
 	MSG msg = { };
@@ -76,7 +42,6 @@ int main()
 			DispatchMessage(&msg);
 		}
 		// 창 메세지가 없으면 엔진 로직 처리
-
 	}
 
 	return 0;
