@@ -12,9 +12,9 @@ int main()
 	std::wstring className = L"Craft Engine Window";
 	std::wstring title = L"Craft Engine";
 
-	// 창 크기
+	// 클라이언트 영역 크기
 	uint32_t width = 1280;
-	uint32_t height = 800;
+	uint32_t height = 780;
 
 	HINSTANCE hInstance = GetModuleHandle(nullptr); // 이 프로그램의 포인터를 운영체제가 구해서 넣어줌
 	// 창 생성에 필요한 정보(구조체) 채우기
@@ -27,14 +27,29 @@ int main()
 	if (!RegisterClass(&wc)) // 등록 실패 핸들
 		return 0;
 
+	/* 창 클라이언트 영역 딱 맞춰주기 */
+	RECT rect = {};
+	rect.left = 0;
+	rect.top = 0;
+	rect.right = width;
+	rect.bottom = height;
+	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
+
+	uint32_t windowWidth = rect.right - rect.left;
+	uint32_t windowHeight = rect.bottom - rect.top;
+
+	/* 창 생성 위치 가운데 고정 */
+	uint32_t positionX = (GetSystemMetrics(SM_CXSCREEN) - windowWidth) / 2;
+	uint32_t positionY = (GetSystemMetrics(SM_CYSCREEN) - windowHeight) / 2;
+
 	// Create the window.
 	HWND hwnd = CreateWindow(
 		className.c_str(),                     // Window class
 		title.c_str(),    // Window text
 		WS_OVERLAPPEDWINDOW,            // Window style
 
-		CW_USEDEFAULT, CW_USEDEFAULT, // 위치
-		width, height, // 크기
+		positionX, positionY, // 위치
+		windowWidth, windowHeight, // 크기
 
 		nullptr,       // Parent window    
 		nullptr,       // Menu
@@ -45,6 +60,7 @@ int main()
 	// 창 생성 실패 시
 	if (hwnd == NULL)
 		return 0;
+
 
 	ShowWindow(hwnd, SW_SHOW);
 
