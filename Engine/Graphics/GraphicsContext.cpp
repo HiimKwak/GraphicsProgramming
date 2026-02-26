@@ -1,5 +1,6 @@
 #include "GraphicsContext.h"
-#include "../Core/Win32Window.h"
+#include "Core/Win32Window.h"
+#include "Core/Common.h"
 
 namespace Craft
 {
@@ -9,28 +10,38 @@ namespace Craft
 
 	GraphicsContext::~GraphicsContext()
 	{
-		if (device)
-		{
-			device->Release(); // 직접 delete하지 않고 시스템에게 해제 요청해야 함
-			device = nullptr;
-		}
-		if (context)
-		{
-			context->Release();
-			context = nullptr;
-		}
-		if (swapChain)
-		{
-			swapChain->Release();
-			swapChain = nullptr;
-		}
+		SafeRelease(device);
+		SafeRelease(context);
+		SafeRelease(swapChain);
 	}
 
-	void GraphicsContext::Initialize(
-		uint32_t width,
-		uint32_t height,
-		const Win32Window& window
-	) {
+	void GraphicsContext::Initialize(const Win32Window& window)
+	{
+		width = window.Width();
+		height = window.Height();
+
+		CreateDevice();
+		CreateSwapChain(window);
+		CreateViewport(window);
+		CreateRenderTargetView();
+
+		context->RSSetViewports(1, &viewport); // 뷰포트 변경이 필요없으므로 여기서 한 번만 설정
+	}
+
+	void GraphicsContext::BeginScene(float red, float green, float blue)
+	{
+		context->OMSetRenderTargets(1, &renderTargetView, nullptr); // 도화지 설정
+		float bgColor[4] = { red, green, blue, 1.f };
+		context->ClearRenderTargetView(renderTargetView, bgColor); // 도화지 흰색으로 칠하기(내부적으로 memset함)
+	}
+
+	void GraphicsContext::EndScene(uint32_t vsync)
+	{
+		swapChain->Present(0, 0);
+	}
+
+	void GraphicsContext::CreateDevice()
+	{
 		uint32_t flag = 0;
 
 #if _DEBUG
@@ -73,9 +84,12 @@ namespace Craft
 			__debugbreak();
 			return;
 		}
+	}
 
+	void GraphicsContext::CreateSwapChain(const Win32Window& window)
+	{
 		IDXGIFactory* factory = nullptr;
-		result = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&factory));
+		HRESULT result = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&factory));
 		if (FAILED(result))
 		{
 			__debugbreak();
@@ -118,17 +132,42 @@ namespace Craft
 			return;
 		}
 
-		if (factory)
-		{
-			factory->Release();
-			factory = nullptr;
-		}
+		SafeRelease(factory);
+	}
 
+	void GraphicsContext::CreateViewport(const Win32Window& window)
+	{
 		viewport.TopLeftX = 0.0f;
 		viewport.TopLeftY = 0.0f;
 		viewport.Width = static_cast<float>(window.Width());
 		viewport.Height = static_cast<float>(window.Height());
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
+	}
+
+	void GraphicsContext::CreateRenderTargetView()
+	{
+		ID3D11Texture2D* backbuffer = nullptr; // 백버퍼 정보 저장 변수
+		HRESULT result = swapChain->GetBuffer(0, IID_PPV_ARGS(&backbuffer)); // IID_PPV_ARGS(&backbuffer) = __uuidof(ID3D11Texture2D)
+
+		if (FAILED(result))
+		{
+			__debugbreak();
+			return;
+		}
+
+		result = device->CreateRenderTargetView(
+			backbuffer, nullptr, &renderTargetView // renderTargetView에 backbuffer 내용 복사했으므로 backbuffer 해제해줘야 함
+		);
+
+		if (FAILED(result))
+		{
+			SafeRelease(backbuffer);
+			__debugbreak();
+			return;
+		}
+
+		SafeRelease(backbuffer);
+
 	}
 }
