@@ -19,6 +19,11 @@ namespace Craft
 		void BeginScene(float red, float green, float blue); // 프레임 준비 함수
 		void EndScene(uint32_t vsync); // 완성된 프레임을 모니터에 보내는 함수(chain swapping). vsync == 0이면 수직동기화 x
 
+		inline ID3D11Device& GetDevice() const { return *device; }
+		inline ID3D11DeviceContext& GetDeviceContext() const { return *context; }
+
+		static GraphicsContext& Get();
+
 	private:
 		void CreateDevice();
 		void CreateSwapChain(const Win32Window& window);
@@ -35,6 +40,8 @@ namespace Craft
 		D3D11_VIEWPORT viewport = { }; // 화면크기(viewport), 클라영역을 얼만큼 쓸지 설정
 
 		uint32_t width = 0, height = 0;
+
+		static GraphicsContext* instance;
 	};
 }
 
