@@ -34,6 +34,7 @@ namespace Craft
 	protected:
 		std::unique_ptr<Win32Window> window;
 		std::unique_ptr<GraphicsContext> graphicsContext;
+		std::unique_ptr<class Renderer> renderer; // 전방선언 이렇게 해도 됨
 
 		EngineSetting setting;
 	};

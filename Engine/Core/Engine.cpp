@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Win32Window.h"
 #include "Graphics/GraphicsContext.h"
+#include "Graphics/Renderer.h"
 
 namespace Craft
 {
@@ -31,7 +32,10 @@ namespace Craft
 		graphicsContext = std::make_unique<GraphicsContext>();
 		graphicsContext->Initialize(*window);
 
-		return false;
+		renderer = std::make_unique<Renderer>();
+		renderer->Initialize();
+
+		return true;
 	}
 
 	void Engine::Run()
@@ -51,6 +55,7 @@ namespace Craft
 			else
 			{
 				graphicsContext->BeginScene(0.6f, 0.7f, 0.8f);
+				renderer->DrawScene();
 				graphicsContext->EndScene(setting.vsync);
 			}
 		}

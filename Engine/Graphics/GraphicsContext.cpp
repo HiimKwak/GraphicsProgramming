@@ -18,6 +18,7 @@ namespace Craft
 		SafeRelease(device);
 		SafeRelease(context);
 		SafeRelease(swapChain);
+		SafeRelease(renderTargetView);
 	}
 
 	void GraphicsContext::Initialize(const Win32Window& window)
