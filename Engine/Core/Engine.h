@@ -1,14 +1,18 @@
 #pragma once
 
+#include "Core/Common.h"
 #include <Windows.h>
 #include <memory>
 #include <string>
 
 namespace Craft
 {
+	// Àü¹æ¼±¾ğ.
 	class Win32Window;
 	class GraphicsContext;
+	class Level;
 
+	// ¿£Áø ¼³Á¤.
 	struct EngineSetting
 	{
 		uint32_t width = 1280;
@@ -18,25 +22,54 @@ namespace Craft
 		uint32_t vsync = 0;
 	};
 
-	class Engine
+	class CRAFT_API Engine
 	{
 	public:
 		Engine();
 		virtual ~Engine();
 
+		// ÃÊ±âÈ­ ÇÔ¼ö.
 		bool Initialize(HINSTANCE instance);
 
+		// ¿£Áø ·çÇÁ ½ÇÇà ÇÔ¼ö.
 		void Run();
 
-	protected:
-		static LRESULT CALLBACK Win32MessageProcedure(HWND handle, UINT message, WPARAM wparam, LPARAM lparam);
+		template<typename T, typename ...Args, 
+			typename = std::enable_if_t<std::is_base_of<Level, T>::value>>
+		void AddNewLevel(Args&&... args)
+		{
+			nextLevel = std::make_shared<T>(std::forward<Args>(args)...);
+		}
 
 	protected:
+		// Win32 À©µµ¿ì ¸Ş½ÃÁö Ã³¸® ÇÔ¼ö(Äİ¹é ÇÔ¼ö).
+		static LRESULT CALLBACK Win32MessageProcedure(
+			HWND handle,
+			UINT message,
+			WPARAM wparam,
+			LPARAM lparam
+		);
+
+		void OnInitialized();
+		void BeginPlay();
+		void Tick(float deltaTime);
+		void Draw();
+
+	protected:
+		// Ã¢ °´Ã¼.
 		std::unique_ptr<Win32Window> window;
-		std::unique_ptr<GraphicsContext> graphicsContext;
-		std::unique_ptr<class Renderer> renderer; // ì „ë°©ì„ ì–¸ ì´ë ‡ê²Œ í•´ë„ ë¨
 
+		// ±×·¡ÇÈ½º ÄÁÅØ½ºÆ® °´Ã¼ (ÀåÄ¡ °ü¸® µîµî).
+		std::unique_ptr<GraphicsContext> graphicsContext;
+
+		// ·»´õ·¯ °´Ã¼(Àå¸é ±×¸®±â ´ã´ç).
+		std::unique_ptr<class Renderer> renderer;
+
+		std::shared_ptr<Level> mainLevel;
+
+		std::shared_ptr<Level> nextLevel;
+
+		// ¿£Áø ¼³Á¤ º¯¼ö.
 		EngineSetting setting;
 	};
 }
-

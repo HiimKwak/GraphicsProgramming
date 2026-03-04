@@ -6,7 +6,8 @@
 
 namespace Craft
 {
-	class Win32Window // WIN32 APIë¡œ ìƒì„±í•˜ëŠ” ì°½ í´ë˜ìŠ¤
+	// WIN32 API·Î »ı¼ºÇÏ´Â Ã¢ Å¬·¡½º.
+	class Win32Window
 	{
 	public:
 		Win32Window(
@@ -18,22 +19,27 @@ namespace Craft
 		);
 		~Win32Window();
 
+		// ÃÊ±âÈ­ ÇÔ¼ö.
 		bool Initialize();
 
+		// Getter.
 		inline uint32_t Width() const { return width; }
 		inline uint32_t Height() const { return height; }
 		inline HWND Handle() const { return handle; }
 
 	private:
+		// Å¸ÀÌÆ².
 		std::wstring title;
+		// Ã¢ µî·ÏÇÒ ¶§ »ç¿ëÇÒ Å¬·¡½º ÀÌ¸§.
 		std::wstring className = L"Craft Engine Class";
-
+		// Å©±â.
 		uint32_t width = 0;
 		uint32_t height = 0;
-
-		HWND handle = nullptr; // ì°½ ê°ì²´ í•¸ë“¤
-		HINSTANCE instance = nullptr; // í”„ë¡œê·¸ë¨ í¬ì¸í„°
-		WNDPROC messageProcedure = nullptr; // ë©”ì‹œì§€ ì²˜ë¦¬ í•¨ìˆ˜ í¬ì¸í„°
+		// Ã¢ °´Ã¼ (ÇÚµé).
+		HWND handle = nullptr;
+		// ÇÁ·Î±×·¥ Æ÷ÀÎÅÍ(ÀÎ½ºÅÏ½º).
+		HINSTANCE instance = nullptr;
+		// ¸Ş½ÃÁö Ã³¸® ÇÔ¼ö Æ÷ÀÎÅÍ.
+		WNDPROC messageProcedure = nullptr;
 	};
 }
-

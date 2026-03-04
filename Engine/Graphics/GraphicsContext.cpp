@@ -5,6 +5,7 @@
 
 namespace Craft
 {
+	// Àü¿ª º¯¼ö ÃÊ±âÈ­.
 	GraphicsContext* GraphicsContext::instance = nullptr;
 
 	GraphicsContext::GraphicsContext()
@@ -15,6 +16,7 @@ namespace Craft
 
 	GraphicsContext::~GraphicsContext()
 	{
+		// ÀÚ¿ø ÇØÁ¦.
 		SafeRelease(device);
 		SafeRelease(context);
 		SafeRelease(swapChain);
@@ -23,27 +25,45 @@ namespace Craft
 
 	void GraphicsContext::Initialize(const Win32Window& window)
 	{
+		// ¸â¹ö º¯¼ö ¼³Á¤.
 		width = window.Width();
 		height = window.Height();
 
+		// ÀåÄ¡ »ı¼º.
 		CreateDevice();
+
+		// SwapChain »ı¼º.
 		CreateSwapChain(window);
+		
+		// ºäÆ÷Æ® »ı¼º.
 		CreateViewport(window);
+
+		// ·»´õ Å¸°Ù ºä »ı¼º.
 		CreateRenderTargetView();
 
-		context->RSSetViewports(1, &viewport); // ë·°í¬íŠ¸ ë³€ê²½ì´ í•„ìš”ì—†ìœ¼ë¯€ë¡œ ì—¬ê¸°ì„œ í•œ ë²ˆë§Œ ì„¤ì •
+		// @Incomplete: ¿ì¸® ¿£Áø¿¡¼­´Â ºäÆ÷Æ®¸¦ ¹Ù²Ü ÇÊ¿ä°¡ ¾øÀ½.
+		context->RSSetViewports(1, &viewport);
 	}
 
 	void GraphicsContext::BeginScene(float red, float green, float blue)
 	{
-		context->OMSetRenderTargets(1, &renderTargetView, nullptr); // ë„í™”ì§€ ì„¤ì •
-		float bgColor[4] = { red, green, blue, 1.f };
-		context->ClearRenderTargetView(renderTargetView, bgColor); // ë„í™”ì§€ í°ìƒ‰ìœ¼ë¡œ ì¹ í•˜ê¸°(ë‚´ë¶€ì ìœ¼ë¡œ memsetí•¨)
+		// ±×¸± ÀÌ¹ÌÁö ÁØºñ.
+		// ÇÑ »öÀ¸·Î ÀÌ¹ÌÁö¸¦ Ä¥ÇÏ±â.
+		// ·»´õ¸µ °úÁ¤À» ´Ü¼øÇÏ°Ô: ºó µµÈ­Áö ÁØºñ -> ±×¸®±â -> ¸ğ´ÏÅÍ·Î Àü´Ş.
+		
+		// ±×¸± µµÈ­Áö ¼³Á¤.
+		context->OMSetRenderTargets(1, &renderTargetView, nullptr);
+
+		// ºóµµÈ­Áö·Î ¸¸µé±â -> ÇÑ »ö»óÀ¸·Î µ¡Ä¥ÇÏ±â.
+		// »ç¿ëÇÒ ¹è°æ»ö.
+		float backgroundColor[4] = { red, green, blue, 1.0f };
+		context->ClearRenderTargetView(renderTargetView, backgroundColor);
 	}
 
 	void GraphicsContext::EndScene(uint32_t vsync)
 	{
-		swapChain->Present(0, 0);
+		// ¸ğ´ÏÅÍ¿¡ Àü´Ş (¹é¹öÆÛ-ÇÁ·ĞÆ®¹öÆÛ ±³È¯).
+		swapChain->Present(vsync, 0);
 	}
 
 	GraphicsContext& GraphicsContext::Get()
@@ -54,43 +74,51 @@ namespace Craft
 
 	void GraphicsContext::CreateDevice()
 	{
+		// ÇÃ·¡±× ÁöÁ¤.
 		uint32_t flag = 0;
 
 #if _DEBUG
-		flag |= D3D11_CREATE_DEVICE_DEBUG; // ì„¤ì • ì•ˆí•´ì£¼ë©´ ë””ë²„ê·¸ ì •ë³´ê°€ ì•ˆìƒê¹€
+		flag |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-		D3D_FEATURE_LEVEL featureLevels[] = // Direct3D API ë²„ì „ ì •ë³´, ê·¸ë˜í”½ì¹´ë“œ ì§€ì› í™•ì¸ 
+		// Direct3D API ¹öÀü Á¤º¸.
+		// ±×·¡ÇÈÄ«µå°¡ Áö¿øÇÏ´ÂÁö È®ÀÎÇÏ´Â ¿ëµµ.
+		D3D_FEATURE_LEVEL featureLevels[] =
 		{
 			D3D_FEATURE_LEVEL_11_1,
 			D3D_FEATURE_LEVEL_11_0,
 		};
 
+		// ÀåÄ¡ »ı¼º.
+		// Device / DeviceContext »ı¼º.
 		/*
-		IDXGIAdapter* pAdapter,
-		D3D_DRIVER_TYPE DriverType,
-		HMODULE Software,
-		UINT Flags,
-		CONST D3D_FEATURE_LEVEL* pFeatureLevels,
-		UINT FeatureLevels,
-		UINT SDKVersion,
-		ID3D11Device** ppDevice,
-		D3D_FEATURE_LEVEL* pFeatureLevel,
-		ID3D11DeviceContext** ppImmediateContext );
+		*   IDXGIAdapter* pAdapter,
+			D3D_DRIVER_TYPE DriverType,
+			HMODULE Software,
+			UINT Flags,
+			CONST D3D_FEATURE_LEVEL* pFeatureLevels,
+			UINT FeatureLevels,
+			UINT SDKVersion,
+			ID3D11Device** ppDevice,
+			D3D_FEATURE_LEVEL* pFeatureLevel,
+			ID3D11DeviceContext** ppImmediateContext );
 		*/
-		HRESULT result = D3D11CreateDevice( // ì˜¤ë¥˜ ë°œìƒ ì‹œ ìŒìˆ˜ ë°˜í™˜
+		// ¿À·ùÀÎ °æ¿ì À½¼ö°ª ¹İÈ¯µÊ.
+		HRESULT result = D3D11CreateDevice(
 			nullptr,
 			D3D_DRIVER_TYPE_HARDWARE,
 			nullptr,
 			flag,
 			featureLevels,
 			_countof(featureLevels),
-			D3D11_SDK_VERSION, // dx11 sdk ë²„ì „ ë§¤í¬ë¡œ, ì„ì˜ ë³€ê²½ x
+			D3D11_SDK_VERSION,
 			&device,
 			nullptr,
 			&context
 		);
 
+		// ¿¹¿ÜÃ³¸®.
+		//SUCCEEDED()
 		if (FAILED(result))
 		{
 			__debugbreak();
@@ -100,50 +128,66 @@ namespace Craft
 
 	void GraphicsContext::CreateSwapChain(const Win32Window& window)
 	{
+		// ½º¿ÒÃ¼ÀÎ »ı¼ºÇØÁÖ´Â °´Ã¼ ¾ò¾î¿À±â.
 		IDXGIFactory* factory = nullptr;
-		HRESULT result = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(&factory));
+		HRESULT result = CreateDXGIFactory(
+			__uuidof(IDXGIFactory),
+			reinterpret_cast<void**>(&factory)
+		);
+
+		// ¿¹¿Ü Ã³¸®.
 		if (FAILED(result))
 		{
 			__debugbreak();
 			return;
 		}
 
+		// ½º¿ÒÃ¼ÀÎ »ı¼ºÀ» À§ÇÑ ÀÚ·á ¼³Á¤.
 		/*
-		DXGI_MODE_DESC BufferDesc;
-		DXGI_SAMPLE_DESC SampleDesc;
-		DXGI_USAGE BufferUsage;
-		UINT BufferCount;
-		HWND OutputWindow;
-		BOOL Windowed;
-		DXGI_SWAP_EFFECT SwapEffect;
-		UINT Flags;
+		*   DXGI_MODE_DESC BufferDesc;
+			DXGI_SAMPLE_DESC SampleDesc;
+			DXGI_USAGE BufferUsage;
+			UINT BufferCount;
+			HWND OutputWindow;
+			BOOL Windowed;
+			DXGI_SWAP_EFFECT SwapEffect;
+			UINT Flags;
 		*/
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
-		swapChainDesc.Windowed = true; // ì°½ëª¨ë“œë¡œ ì‹œì‘
+		swapChainDesc.Windowed = true;	// Ã¢ ¸ğµå·Î ½ÃÀÛ.
 		swapChainDesc.OutputWindow = window.Handle();
-		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // í™”ë©´ ì¶œë ¥ ìš©ë„ë¡œ ë²„í¼ ì„¤ì •
+		// È­¸é Ãâ·Â¿ë.
+		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		// »ç¿ëÇÒ ¹öÆÛ ¼ö.
 		swapChainDesc.BufferCount = 2;
-		// anti-aliasingì— ìƒ˜í”Œë§ ìˆ˜ì¤€ ì„¤ì • ì½”ë“œ, ì§€ê¸ˆì€ off(ì“°ë ¤ë©´ ê¸€ì¹´ì—ê²Œ ë¨¼ì € ë¬¼ì–´ë´ì•¼í•¨)
+
+		// ¾ÈÆ¼-¾È¸®¾Æ½Ì(Anti-Aliasing)¿¡ ¼öÆÛ»ùÇÃ¸µ ¼öÁØ ¼³Á¤.
 		swapChainDesc.SampleDesc.Count = 1;
 		swapChainDesc.SampleDesc.Quality = 0;
-		// ë²„í¼(í”„ë ˆì„ ì´ë¯¸ì§€) ì„¤ì •
+
+		// ¹öÆÛ(ÇÁ·¹ÀÓ-ÀÌ¹ÌÁö) ¼³Á¤.
 		swapChainDesc.BufferDesc.Width = window.Width();
 		swapChainDesc.BufferDesc.Height = window.Height();
-		// ì´ë¯¸ì§€ í”½ì…€ í¬ë§·
-		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // rgba(8x4=32ë¹„íŠ¸), í”½ì…€ ë¼ì´íŠ¸ì´ë¯€ë¡œ ë¶€í˜¸ì—†ê³ (unsigned), 0~1 ì‚¬ì´ ì •ê·œí™”(normalized)
-		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD; // DiscardëŠ” ì¦‰ì‹œ, sequentialì€ ì°¨ë¡€ëŒ€ë¡œ, flip_ì€ ìµœì‹  API
+		// ÀÌ¹ÌÁö ÇÈ¼¿ Æ÷¸Ë(32ºñÆ®-ºÎÈ£¾ø°í-Á¤±ÔÈ­µÈ Æ÷¸Ë).
+		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
+		// ¹öÆÛ ±³È¯ È¿°ú ¼³Á¤.
+		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+
+		// ½º¿Ò Ã¼ÀÎ »ı¼º.
 		result = factory->CreateSwapChain(
 			device,
 			&swapChainDesc,
 			&swapChain
 		);
+
 		if (FAILED(result))
 		{
 			__debugbreak();
 			return;
 		}
 
+		// ÆÑÅä¸® °´Ã¼ ÇØÁ¦.
 		SafeRelease(factory);
 	}
 
@@ -159,27 +203,41 @@ namespace Craft
 
 	void GraphicsContext::CreateRenderTargetView()
 	{
-		ID3D11Texture2D* backbuffer = nullptr; // ë°±ë²„í¼ ì •ë³´ ì €ì¥ ë³€ìˆ˜
-		HRESULT result = swapChain->GetBuffer(0, IID_PPV_ARGS(&backbuffer)); // IID_PPV_ARGS(&backbuffer) = __uuidof(ID3D11Texture2D)
+		// Á¤¼®ÀûÀÎ ¹æ¹ı.
+		// ÀÌ¹ÌÁö ¼Ó¼º ±¸Á¶Ã¼ ¼³Á¤.
+		// ÀÌ°É ±â¹İÀ¸·Î »ı¼º.
 
+		// ¹é¹öÆÛ¿ë ·»´õÅ¸°Ùºä »ı¼º.
+		// ½º¿ÒÃ¼ÀÎ¿¡¼­ ±âº» ¹é¹öÆÛ °¡Áö°í ÀÖÀ½.
+		// ½º¿ÒÃ¼ÀÎ¿¡¼­ ¹öÆÛ ºÒ·¯¿Í¼­ »ı¼º(¶È°°Àº ¸ğ¾çÀ¸·Î).
+
+		// ½º¿ÒÃ¼ÀÎ¿¡¼­ ¾ò¾î¿Ã ¹é¹öÆÛ Á¤º¸¸¦ ÀúÀåÇÒ º¯¼ö.
+		ID3D11Texture2D* backbuffer = nullptr;
+		HRESULT result = swapChain->GetBuffer(0, IID_PPV_ARGS(&backbuffer));
+
+		// ¿¹¿ÜÃ³¸®.
 		if (FAILED(result))
 		{
 			__debugbreak();
 			return;
 		}
 
+		// RTV »ı¼º.
 		result = device->CreateRenderTargetView(
-			backbuffer, nullptr, &renderTargetView // renderTargetViewì— backbuffer ë‚´ìš© ë³µì‚¬í–ˆìœ¼ë¯€ë¡œ backbuffer í•´ì œí•´ì¤˜ì•¼ í•¨
+			backbuffer, nullptr, &renderTargetView
 		);
 
+		// ¿¹¿ÜÃ³¸®.
 		if (FAILED(result))
 		{
+			// »ç¿ëÇÑ ¸®¼Ò½º ÇØÁ¦.
 			SafeRelease(backbuffer);
+
 			__debugbreak();
 			return;
 		}
 
+		// »ç¿ëÇÑ ¸®¼Ò½º ÇØÁ¦.
 		SafeRelease(backbuffer);
-
 	}
 }

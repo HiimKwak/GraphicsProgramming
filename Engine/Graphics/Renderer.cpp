@@ -1,226 +1,76 @@
 #include "Renderer.h"
 #include "Core/Common.h"
 #include "GraphicsContext.h"
+#include "StaticMesh.h"
+#include "Shader/Shader.h"
 #include <d3dcompiler.h>
-#include "Core/Common.h"
+#include <cassert>
 
 namespace Craft
 {
+	Renderer* Renderer::instance = nullptr;
+
 	Renderer::Renderer()
 	{
+		assert(!instance);
+		instance = this;
 	}
 
 	Renderer::~Renderer()
 	{
-		auto& command = renderQueue[0];
-		SafeRelease(command.vertexBuffer);
-		SafeRelease(command.indexBuffer);
-		SafeRelease(command.inputLayout);
-		SafeRelease(command.vertexShader);
-		SafeRelease(command.pixelShader);
 	}
 
+	// ÃÊ±âÈ­.
 	void Renderer::Initialize()
 	{
-		auto& device = GraphicsContext::Get().GetDevice();
-
-		float vertices[] = {
-			0.0f, 0.5f, 0.1f,
-			0.5f, -0.5f, 0.1f,
-			-0.5f, -0.5f, 0.1f // ì™¼ì† ì¢Œí‘œê³„
-		};
-
-		// UINT ByteWidth;
-		// D3D11_USAGE Usage;
-		// UINT BindFlags;
-		// UINT CPUAccessFlags;
-		// UINT MiscFlags;
-		// UINT StructureByteStride;
-		D3D11_BUFFER_DESC vertexBufferDesc{};
-		vertexBufferDesc.ByteWidth = sizeof(float) * _countof(vertices);
-		vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-		// const void* pSysMem;
-		// UINT SysMemPitch;
-		// UINT SysMemSlicePitch;
-		D3D11_SUBRESOURCE_DATA vertexData = {}; // ì„œë¸Œ ë¦¬ì†ŒìŠ¤ ë°ì´í„° ì„¤ì •(ì‹¤ì œ ë°ì´í„° í• ë‹¹)
-		vertexData.pSysMem = vertices;
-
-		ID3D11Buffer* vertexBuffer = nullptr;
-		HRESULT result = device.CreateBuffer(
-			&vertexBufferDesc,
-			&vertexData,
-			&vertexBuffer
-		);
-
-		if (FAILED(result))
-		{
-			__debugbreak();
-			return;
-		}
-
-		uint32_t indices[] = { 0,1,2 }; // ì‚¼ê°í˜• ì¡°í•© ì‹œ ì •ì  ìˆœì„œ ì§€ì •
-
-		D3D11_BUFFER_DESC indexBufferDesc{};
-		indexBufferDesc.ByteWidth = sizeof(uint32_t) * _countof(indices);
-		indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-		// const void* pSysMem;
-		// UINT SysMemPitch;
-		// UINT SysMemSlicePitch;
-		D3D11_SUBRESOURCE_DATA indexData = {}; // ì„œë¸Œ ë¦¬ì†ŒìŠ¤ ë°ì´í„° ì„¤ì •(ì‹¤ì œ ë°ì´í„° í• ë‹¹)
-		indexData.pSysMem = indices;
-
-		ID3D11Buffer* indexBuffer = nullptr;
-		result = device.CreateBuffer(
-			&indexBufferDesc,
-			&indexData,
-			&indexBuffer
-		);
-
-		if (FAILED(result))
-		{
-			__debugbreak();
-			return;
-		}
-
-		// ì…°ì´ë” ì»´íŒŒì¼
-		// (_In_ LPCWSTR pFileName,
-		// _In_reads_opt_(_Inexpressible_(pDefines->Name != NULL)) CONST D3D_SHADER_MACRO* pDefines,
-		// _In_opt_ ID3DInclude* pInclude,
-		// _In_ LPCSTR pEntrypoint,
-		// _In_ LPCSTR pTarget,
-		// _In_ UINT Flags1,
-		// _In_ UINT Flags2,
-		// _Out_ ID3DBlob** ppCode,
-		// _Always_(_Outptr_opt_result_maybenull_) ID3DBlob** ppErrorMsgs
-
-		ID3DBlob* vertexShaderObject = nullptr; // ì»´íŒŒì¼ëœ Object ì½”ë“œ ì €ìž¥
-		result = D3DCompileFromFile(
-			L"HLSLShader/DefaultVS.hlsl",
-			nullptr,
-			nullptr,
-			"main",
-			"vs_5_0",
-			0,
-			0,
-			&vertexShaderObject,
-			nullptr
-		);
-
-		if (FAILED(result))
-		{
-			__debugbreak();
-			return;
-		}
-
-		// ì…°ì´ë” ê°ì²´ ìƒì„±
-		ID3D11VertexShader* vertexShader = nullptr;
-		device.CreateVertexShader(
-			vertexShaderObject->GetBufferPointer(),
-			vertexShaderObject->GetBufferSize(),
-			nullptr,
-			&vertexShader
-
-		);
-
-		// ì…°ì´ë” ì»´íŒŒì¼
-		// (_In_ LPCWSTR pFileName,
-		// _In_reads_opt_(_Inexpressible_(pDefines->Name != NULL)) CONST D3D_SHADER_MACRO* pDefines,
-		// _In_opt_ ID3DInclude* pInclude,
-		// _In_ LPCSTR pEntrypoint,
-		// _In_ LPCSTR pTarget,
-		// _In_ UINT Flags1,
-		// _In_ UINT Flags2,
-		// _Out_ ID3DBlob** ppCode,
-		// _Always_(_Outptr_opt_result_maybenull_) ID3DBlob** ppErrorMsgs
-
-		ID3DBlob* pixelShaderObject = nullptr; // ì»´íŒŒì¼ëœ Object ì½”ë“œ ì €ìž¥
-		result = D3DCompileFromFile(
-			L"HLSLShader/DefaultPS.hlsl",
-			nullptr,
-			nullptr,
-			"main",
-			"ps_5_0",
-			0,
-			0,
-			&pixelShaderObject,
-			nullptr
-		);
-
-		if (FAILED(result))
-		{
-			__debugbreak();
-			return;
-		}
-
-		// ì…°ì´ë” ê°ì²´ ìƒì„±
-		ID3D11PixelShader* pixelShader = nullptr;
-		device.CreatePixelShader(
-			pixelShaderObject->GetBufferPointer(),
-			pixelShaderObject->GetBufferSize(),
-			nullptr,
-			&pixelShader
-
-		);
-
-		// ìž…ë ¥ ë ˆì´ì•„ì›ƒ ìƒì„±
-
-		// LPCSTR SemanticName;
-		// UINT SemanticIndex;
-		// DXGI_FORMAT Format;
-		// UINT InputSlot;
-		// UINT AlignedByteOffset;
-		// D3D11_INPUT_CLASSIFICATION InputSlotClass;
-		// UINT InstanceDataStepRate;
-		D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
-		};
-
-		// _In_reads_(NumElements)  const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs,
-		// _In_range_(0, D3D11_IA_VERTEX_INPUT_STRUCTURE_ELEMENT_COUNT)  UINT NumElements,
-		// _In_reads_(BytecodeLength)  const void* pShaderBytecodeWithInputSignature,
-		// _In_  SIZE_T BytecodeLength,
-		// _COM_Outptr_opt_  ID3D11InputLayout** ppInputLayout) = 0;
-		ID3D11InputLayout* inputLayout = nullptr; // ìž…ë ¥ ë ˆì•„ì´ì›ƒ : ì •ì  ì„¸ì´ë”
-		result = device.CreateInputLayout(
-			inputDesc, _countof(inputDesc), vertexShaderObject->GetBufferPointer(), vertexShaderObject->GetBufferSize(), &inputLayout
-		);
-
-		RenderCommand command = { };
-		command.vertexBuffer = vertexBuffer;
-		command.indexBuffer = indexBuffer;
-		command.indexCount = _countof(indices);
-		command.vertexShader = vertexShader;
-		command.pixelShader = pixelShader;
-		command.inputLayout = inputLayout;
-
-		renderQueue.emplace_back(command);
-
-		SafeRelease(vertexShaderObject);
-		SafeRelease(pixelShaderObject);
 	}
 
+	void Renderer::Submit(std::shared_ptr<StaticMesh> mesh, std::shared_ptr<Shader> shader)
+	{
+		RenderCommand command;
+		command.mesh = mesh;
+		command.shader = shader;
+
+		renderQueue.emplace_back(command);
+	}
+
+	// DrawCall ¹ß»ý Ã³¸®.
+	// -> ·»´õ¸µ ÆÄÀÌÇÁ¶óÀÎ ½ÇÇà(±¸µ¿).
 	void Renderer::DrawScene()
 	{
-		// ë°”ì¸ë”©: ì…°ì´ë” ê° ë‹¨ê³„ì— í•„ìš”í•œ ì •ë³´ ì „ë‹¬ + ì„¤ì •
-		// state ì„¤ì •
+		// ¹ÙÀÎµù.
+		// -> ¼ÎÀÌ´õ °¢ ´Ü°è¿¡ ÇÊ¿äÇÑ Á¤º¸ Àü´Þ ¹× ¼³Á¤.
+		// State ¼³Á¤.
 		auto& context = GraphicsContext::Get().GetDeviceContext();
 
-		RenderCommand& command = renderQueue[0];
+		// ·»´õ Ä¿¸Çµå °¡Á®¿À±â.
+		for (const RenderCommand& command : renderQueue)
+		{
+			auto vertexBuffer = command.mesh->GetVertexBuffer();
+			uint32_t stride = command.mesh->GetStride();
+			uint32_t offset = 0;
 
-		uint32_t stride = sizeof(float) * 3; // ì •ì  ë°°ì—´ì—ì„œ ë°ì´í„° í•œ ë¸”ëŸ­ì˜ ë„ˆë¹„(byte ë„ˆë¹„)
-		uint32_t offset = 0;
-		context.IASetVertexBuffers(0, 1, &command.vertexBuffer, &stride, &offset);
-		context.IASetIndexBuffer(command.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		context.IASetInputLayout(command.inputLayout);
-		context.IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // ì  3ê°œì”© ìž˜ë¼ ì½ê³  ì‚¼ê°í˜•ì„ ë§Œë“¤ì–´ì£¼ëŠ” ëª¨ë“œ
-		// ì…°ì´ë” ì„¤ì •
-		context.VSSetShader(command.vertexShader, nullptr, 0);
-		context.PSSetShader(command.pixelShader, nullptr, 0);
-		// draw ì½œ
-		context.DrawIndexed(command.indexCount, 0, 0);
+			context.IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+			context.IASetIndexBuffer(command.mesh->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+			context.IASetInputLayout(command.shader->GetInputLayout());
+			// Á¡ 3°³¾¿ Àß¶ó¼­ ÀÐ°í, »ï°¢ÇüÀ» ¸¸µé¾îÁÖ´Â ¸ðµå.
+			context.IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+			// ¼ÎÀÌ´õ ¼³Á¤.
+			context.VSSetShader(command.shader->GetVertexShader(), nullptr, 0);
+			context.PSSetShader(command.shader->GetPixelShader(), nullptr, 0);
+
+			// µå·Î¿ì ÄÝ.
+			// ·»´õ¸µ ÆÄÀÌÇÁ¶óÀÎ µ¿ÀÛ.
+			context.DrawIndexed(command.mesh->GetIndexCount(), 0, 0);
+		}
+
+		renderQueue.clear();
+	}
+
+	Renderer& Renderer::Get()
+	{
+		assert(instance);
+		return *instance;
 	}
 }
