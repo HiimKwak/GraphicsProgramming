@@ -37,7 +37,7 @@ namespace Craft
 			return;
 		}
 
-		// ¼ÎÀÌ´õ °´Ã¼ »ý¼º.
+		// ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½.
 		vertexShader = nullptr;
 		result = device.CreateVertexShader(
 			vertexShaderObject->GetBufferPointer(),
@@ -79,7 +79,7 @@ namespace Craft
 			return;
 		}
 
-		// ¼ÎÀÌ´õ °´Ã¼ »ý¼º.
+		// ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½.
 		pixelShader = nullptr;
 		result = device.CreatePixelShader(
 			pixelShaderObject->GetBufferPointer(),
@@ -94,14 +94,14 @@ namespace Craft
 			return;
 		}
 
-		// ÀÔ·Â ·¹ÀÌ¾Æ¿ô »ý¼º.
+		// ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½Ì¾Æ¿ï¿½ ï¿½ï¿½ï¿½ï¿½.
 		D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 
-		// ÀÔ·Â ·¹ÀÌ¾Æ¿ô = Á¤Á¡ ¼ÎÀÌ´õ ÀÔ·ÂÀÇ ¸í¼¼¼­.
-		// µû¶ó¼­ Á¤Á¡ ¼ÎÀÌ´õ Á¤º¸°¡ ÀÖ¾î¾ß ÇÔ.
+		// ï¿½Ô·ï¿½ ï¿½ï¿½ï¿½Ì¾Æ¿ï¿½ = ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ ï¿½ï¿½.
 		inputLayout = nullptr;
 		result = device.CreateInputLayout(
 			inputDesc,
