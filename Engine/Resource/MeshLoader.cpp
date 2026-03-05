@@ -38,6 +38,7 @@ namespace Craft
 		}
 
 		std::vector<Vector3> positions;
+		std::vector<Vector2> texCoords;
 		std::vector<Vertex> vertices;
 
 		std::string line;
@@ -54,7 +55,9 @@ namespace Craft
 			}
 			else if (header == "vt")
 			{
-
+				Vector2 texCoord;
+				ss >> texCoord.x >> texCoord.y;
+				texCoords.emplace_back(texCoord);
 			}
 			else if (header == "vn")
 			{
@@ -70,9 +73,9 @@ namespace Craft
 					"f %d/%d/%d %d/%d/%d %d/%d/%d",
 					&v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3);
 
-				vertices.emplace_back(positions[v1 - 1]);
-				vertices.emplace_back(positions[v2 - 1]);
-				vertices.emplace_back(positions[v3 - 1]);
+				vertices.emplace_back(positions[v1 - 1], texCoords[t1 - 1]);
+				vertices.emplace_back(positions[v2 - 1], texCoords[t2 - 1]);
+				vertices.emplace_back(positions[v3 - 1], texCoords[t3 - 1]);
 			}
 		}
 

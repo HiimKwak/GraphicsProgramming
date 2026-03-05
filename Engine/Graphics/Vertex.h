@@ -2,6 +2,7 @@
 
 #include "Core/Common.h"
 #include <stdint.h>
+#include "Math/Vector2.h"
 #include "Math/Vector3.h"
 
 namespace Craft
@@ -10,12 +11,13 @@ namespace Craft
 	class CRAFT_API Vertex
 	{
 	public:
-		Vertex(const Vector3& position);
+		Vertex(const Vector3& position, Vector2 texCoord = Vector2::Zero);
 		~Vertex() = default;
 
 		static uint32_t Stride() { return sizeof(Vertex); }
 
 	private:
 		Vector3 position;
+		Vector2 texCoord; // texture coordinates, uv coords
 	};
 }

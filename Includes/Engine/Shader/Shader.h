@@ -12,6 +12,8 @@ namespace Craft
 		Shader(const std::wstring& name);
 		virtual ~Shader();
 
+		virtual void Bind();
+
 		inline ID3D11VertexShader* GetVertexShader() const { return vertexShader; }
 		inline ID3D11PixelShader* GetPixelShader() const { return pixelShader; }
 		inline ID3D11InputLayout* GetInputLayout() const { return inputLayout; }

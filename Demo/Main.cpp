@@ -3,7 +3,7 @@
 
 using namespace Craft;
 
-// ¿£Áø ½ÇÇà ÇÔ¼ö.
+// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½.
 void LaunchEngineStartup(HINSTANCE instance)
 {
 	Engine engine;

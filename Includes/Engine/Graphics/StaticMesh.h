@@ -18,7 +18,9 @@ namespace Craft
 			uint32_t stride,
 			const void* indices,
 			uint32_t indexCount);
-		
+
+		virtual void Bind();
+
 		inline ID3D11Buffer* GetVertexBuffer() const { return vertexBuffer; }
 		inline ID3D11Buffer* GetIndexBuffer() const { return indexBuffer; }
 		inline uint32_t GetIndexCount() const { return indexCount; }

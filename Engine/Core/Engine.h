@@ -7,12 +7,11 @@
 
 namespace Craft
 {
-	// 전방선언.
 	class Win32Window;
 	class GraphicsContext;
 	class Level;
+	class MeshLoader;
 
-	// 엔진 설정.
 	struct EngineSetting
 	{
 		uint32_t width = 1280;
@@ -28,21 +27,18 @@ namespace Craft
 		Engine();
 		virtual ~Engine();
 
-		// 초기화 함수.
 		bool Initialize(HINSTANCE instance);
 
-		// 엔진 루프 실행 함수.
 		void Run();
 
-		template<typename T, typename ...Args, 
+		template<typename T, typename ...Args,
 			typename = std::enable_if_t<std::is_base_of<Level, T>::value>>
-		void AddNewLevel(Args&&... args)
+			void AddNewLevel(Args&&... args)
 		{
 			nextLevel = std::make_shared<T>(std::forward<Args>(args)...);
 		}
 
 	protected:
-		// Win32 윈도우 메시지 처리 함수(콜백 함수).
 		static LRESULT CALLBACK Win32MessageProcedure(
 			HWND handle,
 			UINT message,
@@ -56,20 +52,17 @@ namespace Craft
 		void Draw();
 
 	protected:
-		// 창 객체.
 		std::unique_ptr<Win32Window> window;
 
-		// 그래픽스 컨텍스트 객체 (장치 관리 등등).
 		std::unique_ptr<GraphicsContext> graphicsContext;
 
-		// 렌더러 객체(장면 그리기 담당).
 		std::unique_ptr<class Renderer> renderer;
+		std::unique_ptr<MeshLoader> meshLoader;
 
 		std::shared_ptr<Level> mainLevel;
 
 		std::shared_ptr<Level> nextLevel;
 
-		// 엔진 설정 변수.
 		EngineSetting setting;
 	};
 }

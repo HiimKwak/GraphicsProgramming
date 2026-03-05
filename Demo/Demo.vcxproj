@@ -97,12 +97,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Level\TriangleDemoLevel.cpp" />
+    <ClCompile Include="Actor\QuadMeshActor.cpp" />
     <ClCompile Include="Mesh\TriangleMesh.cpp" />
     <ClCompile Include="Actor\TriangleMeshActor.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Level\TriangleDemoLevel.h" />
+    <ClInclude Include="Actor\QuadMeshActor.h" />
     <ClInclude Include="Mesh\TriangleMesh.h" />
     <ClInclude Include="Actor\TriangleMeshActor.h" />
   </ItemGroup>

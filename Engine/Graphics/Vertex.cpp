@@ -2,8 +2,8 @@
 
 namespace Craft
 {
-	Vertex::Vertex(const Vector3& position)
-		:position(position)
+	Vertex::Vertex(const Vector3& position, Vector2 texCoord)
+		:position(position), texCoord(texCoord)
 	{
 	}
 }

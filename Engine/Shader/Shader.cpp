@@ -97,7 +97,8 @@ namespace Craft
 		// �Է� ���̾ƿ� ����.
 		D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 
 		// �Է� ���̾ƿ� = ���� ���̴� �Է��� �����.
@@ -120,5 +121,14 @@ namespace Craft
 		SafeRelease(vertexShader);
 		SafeRelease(pixelShader);
 		SafeRelease(inputLayout);
+	}
+	void Shader::Bind()
+	{
+		auto& context = GraphicsContext::Get().GetDeviceContext();
+
+		context.IASetInputLayout(inputLayout);
+
+		context.VSSetShader(vertexShader, nullptr, 0);
+		context.PSSetShader(pixelShader, nullptr, 0);
 	}
 }

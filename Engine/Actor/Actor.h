@@ -30,7 +30,7 @@ namespace Craft
 		bool isActive = true;
 		bool hasExpired = false;
 
-		std::shared_ptr<StaticMesh> mesh;
+		std::weak_ptr<StaticMesh> mesh;
 		std::shared_ptr<Shader> shader;
 		std::weak_ptr<Level> owner;
 	};

@@ -22,7 +22,10 @@ namespace Craft
 
 	void Actor::Draw()
 	{
-		Renderer::Get().Submit(mesh, shader);
+		if (!mesh.lock())
+			return;
+
+		Renderer::Get().Submit(mesh.lock(), shader);
 	}
 
 	void Actor::SetOwner(std::weak_ptr<Level> newOwner)
