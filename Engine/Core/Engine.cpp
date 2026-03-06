@@ -4,6 +4,7 @@
 #include "Graphics/Renderer.h"
 #include "Level/Level.h"
 #include "Resource/MeshLoader.h"
+#include "Resource/TextureLoader.h"
 
 namespace Craft
 {
@@ -39,6 +40,7 @@ namespace Craft
 		renderer->Initialize();
 
 		meshLoader = std::make_unique<MeshLoader>();
+		textureLoader = std::make_unique<TextureLoader>();
 
 		return true;
 	}

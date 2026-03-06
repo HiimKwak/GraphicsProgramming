@@ -11,6 +11,7 @@ namespace Craft
 	class GraphicsContext;
 	class Level;
 	class MeshLoader;
+	class TextureLoader;
 
 	struct EngineSetting
 	{
@@ -58,6 +59,7 @@ namespace Craft
 
 		std::unique_ptr<class Renderer> renderer;
 		std::unique_ptr<MeshLoader> meshLoader;
+		std::unique_ptr<TextureLoader> textureLoader;
 
 		std::shared_ptr<Level> mainLevel;
 
