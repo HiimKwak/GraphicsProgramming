@@ -60,6 +60,9 @@
     <ClCompile Include="Shader\TextureMappingShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Math\Matrix4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Win32Window.h">
@@ -111,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shader\TextureMappingShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Matrix4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

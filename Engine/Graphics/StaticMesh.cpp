@@ -1,7 +1,6 @@
 #include "StaticMesh.h"
 #include "GraphicsContext.h"
 #include "Core/Common.h"
-#include "Graphics/GraphicsContext.h"
 
 namespace Craft
 {
@@ -19,6 +18,14 @@ namespace Craft
 		const void* vertices, uint32_t vertexCount, uint32_t stride,
 		const void* indices, uint32_t indexCount)
 	{
+		// @test
+		this->vertices.reserve(vertexCount);
+		Vertex* vertexArray = (Vertex*)(vertices);
+		for (uint32_t i = 0; i < vertexCount; ++i)
+		{
+			this->vertices.emplace_back(vertexArray[i]);
+		}
+
 		auto& device = GraphicsContext::Get().GetDevice();
 
 		this->stride = stride;
@@ -65,6 +72,15 @@ namespace Craft
 			__debugbreak();
 			return;
 		}
+	}
+
+	void StaticMesh::UpdateVertexBuffer(const std::vector<Vertex>& vertices)
+	{
+		if (!vertexBuffer || vertices.empty())
+			return;
+
+		auto& context = GraphicsContext::Get().GetDeviceContext();
+		context.UpdateSubresource(vertexBuffer, 0, nullptr, vertices.data(), 0, 0);
 	}
 
 	void StaticMesh::Bind()

@@ -94,12 +94,12 @@ namespace Craft
 		auto& context = GraphicsContext::Get().GetDeviceContext();
 		if (bindType == BindType::VertexShader)
 		{
-			context.VSGetShaderResources(index, 1, &shaderResourceView);
+			context.VSSetShaderResources(index, 1, &shaderResourceView);
 			context.VSSetSamplers(index, 1, &samplerState);
 		}
 		else if (bindType == BindType::PixelShader)
 		{
-			context.PSGetShaderResources(index, 1, &shaderResourceView);
+			context.PSSetShaderResources(index, 1, &shaderResourceView);
 			context.PSSetSamplers(index, 1, &samplerState);
 		}
 	}

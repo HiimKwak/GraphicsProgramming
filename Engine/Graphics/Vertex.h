@@ -11,13 +11,12 @@ namespace Craft
 	class CRAFT_API Vertex
 	{
 	public:
+		Vector3 position;
+		Vector2 texCoord; // texture coordinates, uv coords
+
 		Vertex(const Vector3& position, Vector2 texCoord = Vector2::Zero);
 		~Vertex() = default;
 
 		static uint32_t Stride() { return sizeof(Vertex); }
-
-	private:
-		Vector3 position;
-		Vector2 texCoord; // texture coordinates, uv coords
 	};
 }
