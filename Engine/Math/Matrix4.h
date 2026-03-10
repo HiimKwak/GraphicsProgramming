@@ -12,6 +12,17 @@ namespace Craft
 		Matrix4(const Matrix4& other);
 		~Matrix4() = default;
 
+		static Matrix4 Transpose(const Matrix4& matrix);
+
+		static Matrix4 Translation(float x, float y, float z);
+		static Matrix4 Translation(const Vector3& position);
+
+		static Matrix4 Rotation(float x, float y, float z);
+		static Matrix4 Rotation(const Vector3& rotation);
+		static Matrix4 RotationX(float angle);
+		static Matrix4 RotationY(float angle);
+		static Matrix4 RotationZ(float angle);
+
 		static Matrix4 Scale(float x, float y, float z);
 		static Matrix4 Scale(const Vector3& scale);
 		static Matrix4 Scale(float scale);

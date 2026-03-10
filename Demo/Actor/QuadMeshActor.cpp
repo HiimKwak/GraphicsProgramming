@@ -9,6 +9,7 @@
 #include "Resource/TextureLoader.h"
 
 #include "Math/Matrix4.h"
+#include "Math/Transform.h"
 #include "Graphics/StaticMesh.h"
 
 using namespace Craft;
@@ -38,9 +39,13 @@ void QuadMeshActor::Tick(float deltaTime)
 	else if (scale <= 0.8f)
 		direction = 1.0f;
 
-	auto vertices = mesh.lock()->GetVertices();
-	for (Vertex& vertex : vertices)
-		vertex.position = vertex.position * Matrix4::Scale(scale);
+	static float rotation = 0.0f;
+	rotation += 60.0f * deltaTime;
 
-	mesh.lock()->UpdateVertexBuffer(vertices);
+	static float xPosition = 0.0f;
+	xPosition += 1.0f * direction * deltaTime;
+
+	transform->rotation.z = rotation;
+	transform->scale = Vector3(scale, scale, scale);
+	transform->position.x = xPosition;
 }

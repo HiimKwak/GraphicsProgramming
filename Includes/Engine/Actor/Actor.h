@@ -8,6 +8,7 @@ namespace Craft
 	class StaticMesh;
 	class Shader;
 	class Level;
+	class Transform;
 
 	class CRAFT_API Actor
 	{
@@ -24,6 +25,9 @@ namespace Craft
 		inline bool HasExpired() const { return hasExpired; }
 
 		void SetOwner(std::weak_ptr<Level> newOwner);
+
+	public:
+		std::shared_ptr<Transform> transform;
 
 	protected:
 		bool hasBeganPlay = false;

@@ -109,6 +109,7 @@ xcopy $(OutDir)\Engine.lib ..\Library\Engine\$(Configuration)\ /e /y /i</Command
     <ClCompile Include="Graphics\Vertex.cpp" />
     <ClCompile Include="Level\Level.cpp" />
     <ClCompile Include="Math\Matrix4.cpp" />
+    <ClCompile Include="Math\Transform.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Resource\TextureLoader.cpp" />
@@ -129,6 +130,7 @@ xcopy $(OutDir)\Engine.lib ..\Library\Engine\$(Configuration)\ /e /y /i</Command
     <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Library\StbImage.h" />
     <ClInclude Include="Math\Matrix4.h" />
+    <ClInclude Include="Math\Transform.h" />
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="Resource\MeshLoader.h" />

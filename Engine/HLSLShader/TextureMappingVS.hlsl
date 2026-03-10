@@ -4,6 +4,11 @@ struct VSInput
     float2 texCoord : TEXCOORD;
 };
 
+cbuffer Transform : register(b0)
+{
+    matrix worldMatrix;
+};
+
 struct VSOutput
 {
     float4 position : SV_Position;
@@ -13,7 +18,7 @@ struct VSOutput
 VSOutput main(VSInput input)
 {
     VSOutput output;
-    output.position = float4(input.position, 1);
+    output.position = mul(float4(input.position, 1), worldMatrix);
     output.texCoord = input.texCoord;
     
     return output;

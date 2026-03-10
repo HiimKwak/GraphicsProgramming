@@ -3,6 +3,8 @@
 #include "GraphicsContext.h"
 #include "StaticMesh.h"
 #include "Shader/Shader.h"
+#include "Math/Transform.h"
+
 #include <d3dcompiler.h>
 #include <cassert>
 
@@ -24,11 +26,12 @@ namespace Craft
 	{
 	}
 
-	void Renderer::Submit(std::shared_ptr<StaticMesh> mesh, std::shared_ptr<Shader> shader)
+	void Renderer::Submit(std::shared_ptr<StaticMesh> mesh, std::shared_ptr<Shader> shader, std::shared_ptr<Transform> transform)
 	{
 		RenderCommand command;
 		command.mesh = mesh;
 		command.shader = shader;
+		command.transform = transform;
 
 		renderQueue.emplace_back(command);
 	}
@@ -41,6 +44,7 @@ namespace Craft
 		{
 			command.mesh->Bind();
 			command.shader->Bind();
+			command.transform->Bind();
 
 			context.DrawIndexed(command.mesh->GetIndexCount(), 0, 0);
 		}

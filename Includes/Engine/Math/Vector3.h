@@ -16,5 +16,11 @@ namespace Craft
 		Vector3 operator-(const Vector3& other) const;
 		Vector3 operator*(const Vector3& other) const;
 		Vector3 operator*(float scale) const;
+
+		static Vector3 Zero;
+		static Vector3 One;
+		static Vector3 Right;
+		static Vector3 Up;
+		static Vector3 Forward;
 	};
 }
