@@ -14,6 +14,8 @@ namespace Craft
 
 		static Matrix4 Transpose(const Matrix4& matrix);
 
+		static Matrix4 Inverse(const Matrix4& matrix);
+
 		static Matrix4 Translation(float x, float y, float z);
 		static Matrix4 Translation(const Vector3& position);
 

@@ -33,6 +33,11 @@ namespace Craft
 		return m;
 	}
 
+	Matrix4 Matrix4::Inverse(const Matrix4& matrix)
+	{
+		// caution: must assume the matrix is orthogonal
+	}
+
 	Matrix4 Matrix4::Translation(float x, float y, float z)
 	{
 		Matrix4 m;

@@ -32,4 +32,21 @@ namespace Craft
 	{
 		return Vector3(x * scale, y * scale, z * scale);
 	}
+	float Dot(const Vector3& left, const Vector3& right)
+	{
+		return left.x * right.x + left.y * right.y + left.z * right.z;
+		// A Dot B == A vec * B vec * Cos(Theta)
+	}
+	Vector3 Cross(const Vector3& left, const Vector3& right)
+	{
+		// Cross Product: A × B = |A| * |B| * sin(θ) * n (where n is the normal vector)
+		// Note: Order matters, not commutative (A × B != B × A, actually A × B = -(B × A))
+		// sin(θ) is used for left/right determination in games (perpendicular component)
+		// (cos(θ) in Dot product is used for front/back determination - parallel component)
+		return Vector3(
+			(left.y * right.z) - (left.z * right.y),
+			(left.z * right.x) - (left.x * right.z),
+			(left.x * right.y) - (left.y * right.x)
+		);
+	}
 }

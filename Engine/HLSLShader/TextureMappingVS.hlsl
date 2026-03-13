@@ -4,9 +4,14 @@ struct VSInput
     float2 texCoord : TEXCOORD;
 };
 
-cbuffer Transform : register(b0)
+cbuffer Transform : register(b0) // local to world
 {
     matrix worldMatrix;
+};
+
+cbuffer Camera : register(b1) // world to view, view to projection
+{
+    matrix viewMatrix;
 };
 
 struct VSOutput
