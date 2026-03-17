@@ -39,6 +39,12 @@ namespace Craft
 			nextLevel = std::make_shared<T>(std::forward<Args>(args)...);
 		}
 
+		void OnResize(uint32_t width, uint32_t height); // Resizing window event handler
+
+		static Engine& Get();
+		uint32_t GetWidth() const;
+		uint32_t GetHeight() const;
+
 	protected:
 		static LRESULT CALLBACK Win32MessageProcedure(
 			HWND handle,
@@ -66,5 +72,7 @@ namespace Craft
 		std::shared_ptr<Level> nextLevel;
 
 		EngineSetting setting;
+
+		static Engine* instance;
 	};
 }

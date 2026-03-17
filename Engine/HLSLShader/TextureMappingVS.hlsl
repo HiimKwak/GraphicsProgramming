@@ -11,7 +11,7 @@ cbuffer Transform : register(b0) // local to world
 
 cbuffer Camera : register(b1) // world to view, view to projection
 {
-    matrix viewMatrix;
+    matrix cameraMatrix;
 };
 
 struct VSOutput
@@ -24,6 +24,7 @@ VSOutput main(VSInput input)
 {
     VSOutput output;
     output.position = mul(float4(input.position, 1), worldMatrix);
+    output.position = mul(output.position, cameraMatrix);
     output.texCoord = input.texCoord;
     
     return output;

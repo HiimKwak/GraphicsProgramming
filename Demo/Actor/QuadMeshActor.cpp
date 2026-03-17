@@ -45,7 +45,7 @@ void QuadMeshActor::Tick(float deltaTime)
 	static float xPosition = 0.0f;
 	xPosition += 1.0f * direction * deltaTime;
 
-	transform->rotation.z = rotation;
-	transform->scale = Vector3(scale, scale, scale);
-	transform->position.x = xPosition;
+	//transform->rotation.z = rotation;
+	//transform->scale = Vector3(scale, scale, scale);
+	//transform->position.x = xPosition;
 }

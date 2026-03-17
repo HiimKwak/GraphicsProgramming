@@ -1,80 +1,74 @@
-#pragma once
+ï»¿#pragma once
 
-#include <d3d11.h>		// Direct3D 11 ÀÏ¹ÝÀûÀÎ ³»¿ë.
-#include <dxgi.h>		// DXGI ÀåÄ¡ °ü·Ã(½º¿ÒÃ¼ÀÎ).
+#include <d3d11.h>		// Direct3D 11 ï¿½Ï¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+#include <dxgi.h>		// DXGI ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½).
 #include <string>
 
-// ÀåÄ¡(±×·¡ÇÈÄ«µå).
-// Direct3D¿¡¼­ "ÀåÄ¡"·Î ´Ù·ç´Â °´Ã¼´Â 3°³.
-// Device: ¸®¼Ò½º »ý¼º.
-// DeviceContext: »ý¼ºµÈ ¸®¼Ò½º¸¦ ±×·¡ÇÈÄ«µå¿¡ ÇÒ´ç(¹ÙÀÎµù)/µå·Î¿ìÄÝ.
-// SwapChain(½º¿ÒÃ¼ÀÎ): ¹é¹öÆÛ-ÇÁ·ÐÆ®¹öÆÛ ±³È¯.
-// RenderTargetView(·»´õ Å¸°Ù ºä): È­¸é¿¡ ±×¸± ÇÁ·¹ÀÓ(ÀÌ¹ÌÁö) ¸®¼Ò½º.
-// View(ºä): Æ¯º°ÇÑ ¸®¼Ò½º CPU<->GPU°£ÀÇ ¼ÒÅëÀ» À§ÇØ »ç¿ë.
-// -> CPU¿¡¼­ ¸®¼Ò½º¸¦ »ý¼ºÇÏ¸é ÀÌ°É º»µû¼­ GPU¿¡¼­ º¹Á¦º»À» ¸¸µé°í »ç¿ëÇÔ.
-// Æ÷¿öµå ·»´õ·¯(Forward Renderer) -> ¿ì¸®´Â ÀÌ°É.
-// µðÆÛµå ·»´õ·¯(Deffered Renderer).
+// ï¿½ï¿½Ä¡(ï¿½×·ï¿½ï¿½ï¿½Ä«ï¿½ï¿½).
+// Direct3Dï¿½ï¿½ï¿½ï¿½ "ï¿½ï¿½Ä¡"ï¿½ï¿½ ï¿½Ù·ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ 3ï¿½ï¿½.
+// Device: ï¿½ï¿½ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+// DeviceContext: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½Ä«ï¿½å¿¡ ï¿½Ò´ï¿½(ï¿½ï¿½ï¿½Îµï¿½)/ï¿½ï¿½Î¿ï¿½ï¿½ï¿½.
+// SwapChain(ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½): ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯.
+// RenderTargetView(ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½): È­ï¿½é¿¡ ï¿½×¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½Ì¹ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½Ò½ï¿½.
+// View(ï¿½ï¿½): Æ¯ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½ CPU<->GPUï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
+// -> CPUï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ GPUï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Forward Renderer) -> ï¿½ì¸®ï¿½ï¿½ ï¿½Ì°ï¿½.
+// ï¿½ï¿½ï¿½Ûµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Deffered Renderer).
 
 namespace Craft
 {
-	// Àü¹æ¼±¾ð.
+	// ï¿½ï¿½ï¿½æ¼±ï¿½ï¿½.
 	class Win32Window;
 
-	// ±×·¡ÇÈ½º °ü·Ã ±â´ÉÀ» Á¦°ø ¹× ¸®¼Ò½º °ü¸®.
+	// ï¿½×·ï¿½ï¿½È½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 	class GraphicsContext
 	{
 	public:
 		GraphicsContext();
 		~GraphicsContext();
 
-		// ÃÊ±âÈ­.
 		void Initialize(const Win32Window& window);
 
-		// ÇÁ·¹ÀÓ ÁØºñ ÇÔ¼ö.
 		void BeginScene(float red, float green, float blue);
 
-		// ³ªÁß¿¡ Renderer¿¡¼­ DrawScene(¶Ç´Â DrawFrame) ÇÔ¼ö°¡ È£ÃâµÉ ¿¹Á¤.
-
-		// ¿Ï¼ºµÈ ÇÁ·¹ÀÓÀ» ¸ð´ÏÅÍ¿¡ º¸³»´Â(Ã¼ÀÎ º¯°æ) ÇÔ¼ö.
-		// vsync°¡ 0ÀÌ¸é ¼öÁ÷µ¿±âÈ­ ¾ÈÇÔ. 1ÀÌ¸é ¸ð´ÏÅÍ ¼öÁ÷µ¿±âÈ­ »ç¿ë.
 		void EndScene(uint32_t vsync);
 
-		// Getter.
+		void OnResize(uint32_t width, uint32_t height);
+
 		inline ID3D11Device& GetDevice() const { return *device; }
 		inline ID3D11DeviceContext& GetDeviceContext() const { return *context; }
 
-		// Àü¿ª Á¢±Ù ÇÔ¼ö.
 		static GraphicsContext& Get();
 
 	private:
-		// ÀåÄ¡ »ý¼º.
+		// ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½.
 		void CreateDevice();
 		void CreateSwapChain(const Win32Window& window);
 		void CreateViewport(const Win32Window& window);
-		
-		// ·»´õ Å¸°Ù ºä »ý¼º.
+
+		// ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 		void CreateRenderTargetView();
 
 	private:
-		// ÀåÄ¡·ù.
-		// Direct3D ¸®¼Ò½º´Â Æ÷ÀÎÅÍ·Î¸¸ ´Ù·ê ¼ö ÀÖÀ½.
-		// »ý¼º/ÇØÁ¦¸¦ API¿¡ ¿äÃ».
+		// ï¿½ï¿½Ä¡ï¿½ï¿½.
+		// Direct3D ï¿½ï¿½ï¿½Ò½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í·Î¸ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+		// ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ APIï¿½ï¿½ ï¿½ï¿½Ã».
 		ID3D11Device* device = nullptr;
 		ID3D11DeviceContext* context = nullptr;
 		IDXGISwapChain* swapChain = nullptr;
 
-		// ¸®¼Ò½º.
-		// RTV - ±×¸®±â ´ë»ó ¸®¼Ò½º.
+		// ï¿½ï¿½ï¿½Ò½ï¿½.
+		// RTV - ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ò½ï¿½.
 		ID3D11RenderTargetView* renderTargetView = nullptr;
 
-		// ºäÆ÷Æ®.
+		// ï¿½ï¿½ï¿½ï¿½Æ®.
 		D3D11_VIEWPORT viewport = { };
 
-		// È­¸é Å©±â.
+		// È­ï¿½ï¿½ Å©ï¿½ï¿½.
 		uint32_t width = 0;
 		uint32_t height = 0;
 
-		// Àü¿ª º¯¼ö.
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 		static GraphicsContext* instance;
 	};
 }

@@ -29,6 +29,15 @@ namespace Craft
 		static Matrix4 Scale(const Vector3& scale);
 		static Matrix4 Scale(float scale);
 
+		static Matrix4 LookAt(const Vector3& position, const Vector3& target, const Vector3& up); // Camera transform matrix (view transform), position = camera position, target = camera view direction, up = up vector (usually the world up vector)
+		static Matrix4 Perspective(
+			float fieldOfView,	// field of view
+			float width,		// screen width
+			float height,		// screen height
+			float nearDistance, // near plane distance of the view frustum
+			float farDistance	// far plane distance of the view frustum
+		); // perspective projection matrix
+
 		Matrix4& operator=(const Matrix4& other);
 		Matrix4 operator*(const Matrix4& other) const;
 		Matrix4& operator*=(const Matrix4& other);

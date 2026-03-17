@@ -36,6 +36,7 @@ namespace Craft
 	Matrix4 Matrix4::Inverse(const Matrix4& matrix)
 	{
 		// caution: must assume the matrix is orthogonal
+		return Transpose(matrix);
 	}
 
 	Matrix4 Matrix4::Translation(float x, float y, float z)
@@ -133,6 +134,45 @@ namespace Craft
 	Matrix4 Matrix4::Scale(float scale)
 	{
 		return Scale(scale, scale, scale);
+	}
+
+	Matrix4 Matrix4::LookAt(const Vector3& position, const Vector3& target, const Vector3& up)
+	{
+		// calculate Up Vector using cross function
+		Vector3 forward = (target - position).Normalized();
+		Vector3 right = Cross(up, forward).Normalized();
+		Vector3 upDir = Cross(forward, right);
+
+		float x = Dot(right, position); // correcting position considering camera direction
+		float y = Dot(upDir, position);
+		float z = Dot(forward, position);
+
+		Matrix4 m;
+		m.m00 = right.x; m.m01 = right.y; m.m02 = right.z; m.m03 = 0.0f;
+		m.m10 = upDir.x; m.m11 = upDir.y; m.m12 = upDir.z; m.m13 = 0.0f;
+		m.m20 = forward.x; m.m21 = forward.y; m.m22 = forward.z; m.m23 = 0.0f;
+		m.m30 = -x; m.m31 = -y; m.m32 = -z; m.m33 = 1.0f;
+
+		return m;
+	}
+
+	Matrix4 Matrix4::Perspective(float fieldOfView, float width, float height, float nearDistance, float farDistance)
+	{
+		float aspect = width / height;
+		float fov = fieldOfView / 2.0f * degreeToRadian;
+		float h = 1.0f / std::tanf(fov);
+		float w = h / aspect;
+
+		float a = (farDistance) / (farDistance - nearDistance);
+		float b = (-nearDistance * farDistance) / (farDistance - nearDistance);
+
+		Matrix4 m;
+		m.m00 = w;		m.m01 = 0.0f;	m.m02 = 0.0f;	m.m03 = 0.0f;
+		m.m10 = 0.0f;	m.m11 = h;		m.m12 = 0.0f;	m.m13 = 0.0f;
+		m.m20 = 0.0f;	m.m21 = 0.0f;	m.m22 = a;		m.m23 = 1.0f;
+		m.m30 = 0.0f;	m.m31 = 0.0f;	m.m32 = b;		m.m33 = 0.0f;
+
+		return m;
 	}
 
 	Matrix4& Matrix4::operator=(const Matrix4& other)

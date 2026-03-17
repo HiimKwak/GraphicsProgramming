@@ -17,6 +17,12 @@ namespace Craft
 		Vector3 operator*(const Vector3& other) const;
 		Vector3 operator*(float scale) const;
 
+		friend CRAFT_API float Dot(const Vector3& left, const Vector3& right);
+		friend CRAFT_API Vector3 Cross(const Vector3& left, const Vector3& right);
+
+		float Length() const;
+		Vector3 Normalized() const;
+
 		static Vector3 Zero;
 		static Vector3 One;
 		static Vector3 Right;

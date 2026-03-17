@@ -1,4 +1,6 @@
 #include "Vector3.h"
+#include <cmath>
+#include <cassert>
 
 namespace Craft
 {
@@ -32,6 +34,7 @@ namespace Craft
 	{
 		return Vector3(x * scale, y * scale, z * scale);
 	}
+
 	float Dot(const Vector3& left, const Vector3& right)
 	{
 		return left.x * right.x + left.y * right.y + left.z * right.z;
@@ -48,5 +51,17 @@ namespace Craft
 			(left.z * right.x) - (left.x * right.z),
 			(left.x * right.y) - (left.y * right.x)
 		);
+	}
+
+	float Vector3::Length() const
+	{
+		return sqrt(x * x + y * y + z * z);
+	}
+
+	Vector3 Vector3::Normalized() const
+	{
+		float length = Length();
+		assert(length > 0);
+		return Vector3(x / length, y / length, z / length);
 	}
 }
