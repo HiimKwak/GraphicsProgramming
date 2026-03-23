@@ -16,7 +16,7 @@ using namespace Craft;
 
 QuadMeshActor::QuadMeshActor()
 {
-	MeshLoader::Get().GetMesh("Quad.obj", mesh);
+	MeshLoader::Get().GetMesh("Sphere.obj", mesh);
 
 	//shader = std::make_shared<Shader>(L"Default");
 	shader = std::make_shared<TextureMappingShader>("T_coord.png");

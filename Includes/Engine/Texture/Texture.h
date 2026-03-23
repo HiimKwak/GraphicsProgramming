@@ -36,6 +36,9 @@ namespace Craft
 		void Bind(uint32_t index = 0); // supposed to be located in shader.h
 
 	private:
+		void ConvertToRGBA(std::unique_ptr<TextureData>& textureData);
+
+	private:
 		std::string name;
 		BindType bindType = BindType::PixelShader;
 		std::unique_ptr<TextureData> data;

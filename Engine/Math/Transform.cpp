@@ -59,4 +59,19 @@ namespace Craft
 
 		context.VSSetConstantBuffers(0, 1, &constantBuffer);
 	}
+
+	Vector3 Transform::Right() const
+	{
+		return Vector3::Right * Matrix4::Rotation(rotation);
+	}
+
+	Vector3 Transform::Up() const
+	{
+		return Vector3::Up * Matrix4::Rotation(rotation);
+	}
+
+	Vector3 Transform::Forward() const
+	{
+		return Vector3::Forward * Matrix4::Rotation(rotation);
+	}
 }

@@ -2,6 +2,7 @@ struct VSInput
 {
     float3 position : POSITION;
     float2 texCoord : TEXCOORD;
+    float3 normal : NORMAL;
 };
 
 cbuffer Transform : register(b0) // local to world
@@ -18,6 +19,7 @@ struct VSOutput
 {
     float4 position : SV_Position;
     float2 texCoord : TEXCOORD;
+    float3 normal : NORMAL;
 };
 
 VSOutput main(VSInput input)
@@ -26,6 +28,8 @@ VSOutput main(VSInput input)
     output.position = mul(float4(input.position, 1), worldMatrix);
     output.position = mul(output.position, cameraMatrix);
     output.texCoord = input.texCoord;
+    
+    output.normal = mul(input.normal, (float3x3) worldMatrix); // transform local normal to world normal
     
     return output;
 }

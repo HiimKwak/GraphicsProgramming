@@ -13,8 +13,13 @@ namespace Craft
 	public:
 		Vector3 position;
 		Vector2 texCoord; // texture coordinates, uv coords
+		Vector3 normal;
 
-		Vertex(const Vector3& position, Vector2 texCoord = Vector2::Zero);
+		Vertex(
+			const Vector3& position,
+			const Vector2& texCoord = Vector2::Zero,
+			const Vector3& normal = Vector3::Zero
+		);
 		~Vertex() = default;
 
 		static uint32_t Stride() { return sizeof(Vertex); }

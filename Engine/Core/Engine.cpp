@@ -5,6 +5,8 @@
 #include "Level/Level.h"
 #include "Resource/MeshLoader.h"
 #include "Resource/TextureLoader.h"
+#include "Input.h"
+#include <windowsx.h>
 
 namespace Craft
 {
@@ -45,6 +47,8 @@ namespace Craft
 		meshLoader = std::make_unique<MeshLoader>();
 		textureLoader = std::make_unique<TextureLoader>();
 
+		input = std::make_unique<Input>();
+
 		return true;
 	}
 
@@ -64,6 +68,8 @@ namespace Craft
 
 		while (msg.message != WM_QUIT)
 		{
+			if (isQuit) break;
+
 			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 			{
 				TranslateMessage(&msg);
@@ -104,10 +110,17 @@ namespace Craft
 						nextLevel.reset();
 					}
 
+					input->ResetInputs();
+
 					previousTime = currentTime;
 				}
 			}
 		}
+	}
+
+	void Engine::Quit()
+	{
+		isQuit = true;
 	}
 
 	void Engine::OnResize(uint32_t width, uint32_t height)
@@ -162,6 +175,68 @@ namespace Craft
 			uint32_t width = LOWORD(lparam);
 			uint32_t height = HIWORD(lparam);
 			instance->OnResize(width, height);
+		}
+		return 0;
+
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+		case WM_SYSKEYDOWN:
+		case WM_SYSKEYUP:
+		{
+			if (GetFocus() != handle) break; // only if focused on the program window
+			if (!Input::IsValid()) break;
+
+			bool isKeyUp = (lparam & ((int64_t)1 << 30)) != 0;
+			bool isKeyDown = (lparam & ((int64_t)1 << 31)) == 0;
+
+			if (isKeyUp != isKeyDown)
+			{
+				uint32_t vkCode = static_cast<uint32_t>(wparam);
+				Input::Get().SetKeyUpDown(vkCode, isKeyUp, isKeyDown);
+			}
+		}
+		return 0;
+
+		case WM_LBUTTONDOWN:
+		{
+			if (Input::IsValid()) break;
+
+			Input::Get().SetButtonUpDown(0, false, true);
+		}
+		return 0;
+		case WM_LBUTTONUP:
+		{
+			if (Input::IsValid()) break;
+
+			Input::Get().SetButtonUpDown(0, true, false);
+		}
+		return 0;
+
+		case WM_RBUTTONDOWN:
+		{
+			if (Input::IsValid()) break;
+
+			Input::Get().SetButtonUpDown(1, false, true);
+		}
+		return 0;
+		case WM_RBUTTONUP:
+		{
+			if (Input::IsValid()) break;
+
+			Input::Get().SetButtonUpDown(1, true, false);
+		}
+		return 0;
+
+		case WM_MOUSEMOVE:
+		{
+			if (!Input::IsValid()) break;
+
+			//int xPosition = LOWORD(lparam);
+			//int yPosition = HIWORD(lparam);
+			int xPosition = GET_X_LPARAM(lparam);
+			int yPosition = GET_Y_LPARAM(lparam);
+
+			Input::Get().SetMousePosition(xPosition, yPosition);
 		}
 		return 0;
 

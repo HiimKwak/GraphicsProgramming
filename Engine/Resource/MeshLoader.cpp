@@ -39,6 +39,7 @@ namespace Craft
 
 		std::vector<Vector3> positions;
 		std::vector<Vector2> texCoords;
+		std::vector<Vector3> normals;
 		std::vector<Vertex> vertices;
 
 		std::string line;
@@ -63,6 +64,7 @@ namespace Craft
 			{
 				Vector3 normal;
 				ss >> normal.x >> normal.y >> normal.z;
+				normals.emplace_back(normal);
 			}
 			else if (header == "f")
 			{
@@ -73,9 +75,9 @@ namespace Craft
 					"f %d/%d/%d %d/%d/%d %d/%d/%d",
 					&v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3);
 
-				vertices.emplace_back(positions[v1 - 1], texCoords[t1 - 1]);
-				vertices.emplace_back(positions[v2 - 1], texCoords[t2 - 1]);
-				vertices.emplace_back(positions[v3 - 1], texCoords[t3 - 1]);
+				vertices.emplace_back(positions[v1 - 1], texCoords[t1 - 1], normals[n1 - 1]);
+				vertices.emplace_back(positions[v2 - 1], texCoords[t2 - 1], normals[n2 - 1]);
+				vertices.emplace_back(positions[v3 - 1], texCoords[t3 - 1], normals[n3 - 1]);
 			}
 		}
 

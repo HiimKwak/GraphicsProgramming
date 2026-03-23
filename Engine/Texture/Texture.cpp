@@ -20,6 +20,11 @@ namespace Craft
 			0
 		);
 
+		// convert to right format when wrong format inserted
+		if (data->channelCount == 3)
+			ConvertToRGBA(data);
+
+
 		if (!data->pixelArray)
 		{
 			__debugbreak();
@@ -102,5 +107,34 @@ namespace Craft
 			context.PSSetShaderResources(index, 1, &shaderResourceView);
 			context.PSSetSamplers(index, 1, &samplerState);
 		}
+	}
+	void Texture::ConvertToRGBA(std::unique_ptr<TextureData>& textureData)
+	{
+		const uint32_t targetChannelCount = 4;
+		const uint32_t pixelCount = textureData->width * textureData->height;
+		const uint32_t size = pixelCount * targetChannelCount; // buffer size
+		uint8_t* imageBuffer = new uint8_t[size];
+
+		memset(imageBuffer, 255, size); // initialize buffer with num 255
+		uint8_t* source = reinterpret_cast<uint8_t*>(textureData->pixelArray);
+		uint8_t* dest = imageBuffer;
+
+		for (uint32_t i = 0; i < pixelCount; ++i)
+		{
+			memcpy(dest, source, sizeof(uint8_t) * 3);
+
+			// jump to next segment
+			source += 3;
+			dest += 4;
+		}
+
+		if (textureData->pixelArray)
+		{
+			free(textureData->pixelArray);
+			textureData->pixelArray = nullptr;
+		}
+
+		textureData->pixelArray = imageBuffer;
+		textureData->channelCount = targetChannelCount;
 	}
 }

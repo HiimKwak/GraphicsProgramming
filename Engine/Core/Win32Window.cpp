@@ -3,38 +3,38 @@
 namespace Craft
 {
 	Win32Window::Win32Window(
-		uint32_t width, 
-		uint32_t height, 
+		uint32_t width,
+		uint32_t height,
 		const std::wstring& title,
-		HINSTANCE instance, 
+		HINSTANCE instance,
 		WNDPROC messageProcedure)
 		: width(width), height(height), title(title),
-		instance(instance), 
+		instance(instance),
 		messageProcedure(messageProcedure)
 	{
 	}
 
 	Win32Window::~Win32Window()
 	{
-		// Ã¢ µî·Ï ÇØÁ¦.
+		// Ã¢ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 		UnregisterClass(className.c_str(), instance);
 	}
-	
+
 	bool Win32Window::Initialize()
 	{
-		// Ã¢ »ý¼º¿¡ ÇÊ¿äÇÑ Á¤º¸(±¸Á¶Ã¼) Ã¤¿ì±â.
+		// Ã¢ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½Ã¼) Ã¤ï¿½ï¿½ï¿½.
 		WNDCLASS wc = { };
 		wc.lpfnWndProc = messageProcedure;
-		wc.hInstance = instance;       // ÇÁ·Î±×·¥ Æ÷ÀÎÅÍ.
+		wc.hInstance = instance;       // ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 		wc.lpszClassName = className.c_str();
 
-		// Å¬·¡½º µî·Ï.
+		// Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½.
 		if (!RegisterClass(&wc))
 		{
 			return 0;
 		}
 
-		// Ã¢ Å©±â ±¸ÇÏ±â.
+		// Ã¢ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½.
 		RECT rect = {};
 		rect.left = 0;
 		rect.top = 0;
@@ -42,21 +42,21 @@ namespace Craft
 		rect.bottom = height;
 		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
-		// Ã¢ Å©±â.
+		// Ã¢ Å©ï¿½ï¿½.
 		uint32_t windowWidth = rect.right - rect.left;
 		uint32_t windowHeight = rect.bottom - rect.top;
 
-		// Ã¢ »ý¼º À§Ä¡ °¡¿îµ¥·Î.
+		// Ã¢ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½îµ¥ï¿½ï¿½.
 		uint32_t positionX = (GetSystemMetrics(SM_CXSCREEN) - windowWidth) / 2;
 		uint32_t positionY = (GetSystemMetrics(SM_CYSCREEN) - windowHeight) / 2;
 
-		// Ã¢ °´Ã¼ »ý¼º.
+		// Ã¢ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½.
 		handle = CreateWindow(
 			className.c_str(),               // Window class
 			title.c_str(),                   // Window text
 			WS_OVERLAPPEDWINDOW,            // Window style
 
-			// À§Ä¡ ¹× Å©±â
+			// ï¿½ï¿½Ä¡ ï¿½ï¿½ Å©ï¿½ï¿½
 			positionX, positionY,
 			windowWidth, windowHeight,
 
@@ -66,17 +66,17 @@ namespace Craft
 			nullptr        // Additional application data
 		);
 
-		// Ã¢ »ý¼º ½ÇÆÐ Ã³¸®.
+		// Ã¢ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½.
 		if (!handle)
 		{
 			return false;
 		}
 
-		// Ã¢ÀÇ Å¬¶óÀÌ¾ðÆ® ¿µ¿ª Å©±â ±¸ÇÏ±â.
+		// Ã¢ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½.
 		//RECT rect2;
 		//GetClientRect(hwnd, &rect2);
 
-		// Ã¢ º¸ÀÌ±â ¼³Á¤.
+		// Ã¢ ï¿½ï¿½ï¿½Ì±ï¿½ ï¿½ï¿½ï¿½ï¿½.
 		ShowWindow(handle, SW_SHOW);
 		return true;
 	}

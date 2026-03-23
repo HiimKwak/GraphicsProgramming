@@ -12,6 +12,7 @@ namespace Craft
 	class Level;
 	class MeshLoader;
 	class TextureLoader;
+	class Input;
 
 	struct EngineSetting
 	{
@@ -31,6 +32,7 @@ namespace Craft
 		bool Initialize(HINSTANCE instance);
 
 		void Run();
+		void Quit();
 
 		template<typename T, typename ...Args,
 			typename = std::enable_if_t<std::is_base_of<Level, T>::value>>
@@ -59,6 +61,7 @@ namespace Craft
 		void Draw();
 
 	protected:
+		bool isQuit = false;
 		std::unique_ptr<Win32Window> window;
 
 		std::unique_ptr<GraphicsContext> graphicsContext;
@@ -68,8 +71,9 @@ namespace Craft
 		std::unique_ptr<TextureLoader> textureLoader;
 
 		std::shared_ptr<Level> mainLevel;
-
 		std::shared_ptr<Level> nextLevel;
+
+		std::unique_ptr<Input> input;
 
 		EngineSetting setting;
 

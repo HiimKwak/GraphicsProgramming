@@ -10,12 +10,13 @@ namespace Craft
 	{
 	public:
 		CameraActor(float fieldOfView = 60.0f, float nearDistance = 0.1f, float farDistance = 10000.0f);
-		~CameraActor();
+		virtual ~CameraActor();
 
+	protected:
 		virtual void Tick(float deltaTime) override;
 		virtual void Draw() override;
 
-	private:
+	protected:
 		Matrix4 viewMatrix; // (RT)^(-1) = T^(-1) * R^(-1)
 
 		Matrix4 projectionMatrix;
