@@ -18,6 +18,23 @@ namespace Craft
 		std::shared_ptr<Transform> transform;
 	};
 
+	struct CameraData
+	{
+		Matrix4 matrix;
+		Vector3 position;
+
+		float padding = 0.0f;
+	};
+
+	struct LightData
+	{
+		Vector3 position; // light direction
+		float intensity = 1.0f;
+		Vector3 color = Vector3::One;
+
+		float padding = 0.0f;
+	};
+
 	class Renderer
 	{
 	public:
@@ -28,7 +45,9 @@ namespace Craft
 
 		void Submit(std::shared_ptr<StaticMesh> mesh, std::shared_ptr<Shader> shader, std::shared_ptr<Transform> transform);
 
-		void UpdateCameraMatrix(const Matrix4& viewMatrix, const Matrix4& projectionMatrix);
+		void UpdateCameraMatrix(const Matrix4& viewMatrix, const Matrix4& projectionMatrix, const Vector3& position);
+
+		void UpdateLightData(const Vector3& position, float intensity, const Vector3& color);
 
 		void DrawScene();
 
@@ -38,6 +57,7 @@ namespace Craft
 		std::vector<RenderCommand> renderQueue;
 
 		ID3D11Buffer* cameraBuffer = nullptr;
+		ID3D11Buffer* lightBuffer = nullptr;
 
 		static Renderer* instance;
 	};

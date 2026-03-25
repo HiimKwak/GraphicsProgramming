@@ -38,6 +38,6 @@ namespace Craft
 	{
 		Actor::Draw();
 
-		Renderer::Get().UpdateCameraMatrix(viewMatrix, projectionMatrix);
+		Renderer::Get().UpdateCameraMatrix(viewMatrix, projectionMatrix, transform->position);
 	}
 }

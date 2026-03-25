@@ -3,19 +3,51 @@ struct VSOutput
     float4 position : SV_Position;
     float2 texCoord : TEXCOORD;
     float3 normal : NORMAL;
+    float3 cameraPosition : TEXCOORD1;
+    float3 worldPosition : TEXCOORD2;
 };
 
-Texture2D diffuseMap : register(t0);
-SamplerState diffuseSampler : register(s0);
+cbuffer Light : register(b0)
+{
+    float3 lightPosition;
+    float intensity;
+    float3 color;
+    float padding;
+};
+
+Texture2D map : register(t0);
+SamplerState mapSampler : register(s0);
 
 float4 main(VSOutput input) : SV_TARGET
 {
-    float4 diffuseColor = diffuseMap.Sample(diffuseSampler, input.texCoord);
+    float4 diffuseMapColor = map.Sample(mapSampler, input.texCoord);
     
-    float3 lightDir = normalize(float3(500.0f, 500.0f, -500.f)); // hard-coded & normalized light direction
+    // float3 lightDir = normalize(float3(500.0f, 500.0f, -500.f)); // hard-coded & normalized light direction
+    float3 lightDir = normalize(input.worldPosition - lightPosition); // vertex to light vector; need to turn around 
     
-    float NdotL = dot(normalize(input.normal), lightDir); // Lambertian reflectance
+    float3 worldNormal = normalize(input.normal);
+    
+    float NdotL = dot(worldNormal, -lightDir); // Lambert's cosine law
+    
+    float specular = 0.0f;
+    if (NdotL > 0) // Phong shader
+    {
+        // RdotV: dot product with Reflection Vector and View Direction Vector
+        float3 reflection = reflect(lightDir, worldNormal);
+        float3 viewDir = normalize(input.cameraPosition - input.position.xyz);
+    
+        float RdotV = saturate(dot(reflection, viewDir)); // == max(0, dot(reflection, viewDir));
+        float shineness = 16;
+        specular = pow(RdotV, shineness);
+    }
+    
+    NdotL = pow(NdotL * 0.5f + 0.5f, 2); // Half-Lambert
+    float4 diffuse = diffuseMapColor * NdotL;
+    float4 specularColor = specular * diffuseMapColor;
+    
+    float4 finalColor = float4(0, 0, 0, 1);
+    finalColor = diffuse + specularColor;
     
     // return diffuseColor * NdotL;
-    return float4(NdotL, NdotL, NdotL, 1);
+    return finalColor;
 }
