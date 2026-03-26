@@ -15,12 +15,14 @@ cbuffer Light : register(b0)
     float padding;
 };
 
-Texture2D map : register(t0);
+Texture2D diffuseMap : register(t0);
+Texture2D specularMap : register(t1);
 SamplerState mapSampler : register(s0);
 
 float4 main(VSOutput input) : SV_TARGET
 {
-    float4 diffuseMapColor = map.Sample(mapSampler, input.texCoord);
+    float4 diffuseMapColor = diffuseMap.Sample(mapSampler, input.texCoord);
+    float4 specularMapColor = specularMap.Sample(mapSampler, input.texCoord);
     
     // float3 lightDir = normalize(float3(500.0f, 500.0f, -500.f)); // hard-coded & normalized light direction
     float3 lightDir = normalize(input.worldPosition - lightPosition); // vertex to light vector; need to turn around
@@ -29,19 +31,7 @@ float4 main(VSOutput input) : SV_TARGET
     
     float NdotL = dot(worldNormal, -lightDir); // Lambert's cosine law; turn lightDir 
     
-    float specular = 0.0f;
-    // Vanilla Phong shader
-    //if (NdotL > 0) 
-    //{
-    //    // RdotV: dot product with Reflection Vector and View Direction Vector
-    //    float3 reflection = reflect(lightDir, worldNormal);
-    //    float3 viewDir = normalize(input.worldPosition - input.cameraPosition);
-    
-    //    // Flip the viewDir vector direction to compute the dot product with the reflection vector
-    //    float RdotV = saturate(dot(reflection, -viewDir)); // == max(0, dot(reflection, -viewDir));
-    //    float shineness = 16;
-    //    specular = pow(RdotV, shineness);
-    //}
+    float3 specular = 0.0f;
     
     // Blinn Phong shader
     if (NdotL > 0)
@@ -51,14 +41,14 @@ float4 main(VSOutput input) : SV_TARGET
     
         float NdotH = saturate(dot(halfVector, worldNormal));
         float shineness = 16;
-        specular = pow(NdotH, shineness);
+        specular = specularMapColor.rgb * pow(NdotH, shineness);
     }
         
     float4 finalColor = float4(0, 0, 0, 1);
     
     NdotL = pow(NdotL * 0.5f + 0.5f, 2); // Half-Lambert
     float4 diffuse = diffuseMapColor * NdotL;
-    float4 specularColor = specular * float4(lightColor, 1);
+    float4 specularColor = float4(specular, 1) * float4(lightColor, 1);
     
     finalColor = diffuse + specularColor;
     
