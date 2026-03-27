@@ -19,6 +19,7 @@ cbuffer Light : register(b0)
 
 Texture2D diffuseMap : register(t0);
 Texture2D specularMap : register(t1);
+Texture2D normalMap : register(t2);
 SamplerState mapSampler : register(s0);
 
 float4 main(VSOutput input) : SV_TARGET
@@ -26,10 +27,19 @@ float4 main(VSOutput input) : SV_TARGET
     float4 diffuseMapColor = diffuseMap.Sample(mapSampler, input.texCoord);
     float4 specularMapColor = specularMap.Sample(mapSampler, input.texCoord);
     
+    float4 tangentNormal = normalMap.Sample(mapSampler, input.texCoord);
+    tangentNormal = tangentNormal * 2 - 1; // compressed range -1 to 1 to range 0 to 1 by multiply 0.5 and add 0.5
+    
     // float3 lightDir = normalize(float3(500.0f, 500.0f, -500.f)); // hard-coded & normalized light direction
     float3 lightDir = normalize(input.worldPosition - lightPosition); // vertex to light vector; need to turn around
     
-    float3 worldNormal = normalize(input.normal);
+    // float3 worldNormal = normalize(input.normal);
+    float3x3 tangentToWorld = float3x3(
+        normalize(input.tangent),
+        normalize(input.bitangent),
+        normalize(input.normal)
+    );
+    float3 worldNormal = normalize(mul(tangentNormal.xyz, tangentToWorld));
     
     float NdotL = dot(worldNormal, -lightDir); // Lambert's cosine law; turn lightDir 
     

@@ -5,6 +5,8 @@ struct VSOutput
     float3 normal : NORMAL;
     float3 cameraPosition : TEXCOORD1;
     float3 worldPosition : TEXCOORD2;
+    float3 tangent : TANGENT;
+    float3 bitangent : BITANGENT;
 };
 
 cbuffer Light : register(b0)

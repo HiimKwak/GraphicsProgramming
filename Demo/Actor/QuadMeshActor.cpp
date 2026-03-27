@@ -3,6 +3,7 @@
 #include "Shader/Shader.h"
 #include "Shader/TextureMappingShader.h"
 #include "Shader/SpecularMappingShader.h"
+#include "Shader/NormalMappingShader.h"
 
 #include "Texture/Texture.h"
 
@@ -20,7 +21,7 @@ QuadMeshActor::QuadMeshActor()
 	MeshLoader::Get().GetMesh("Sphere.obj", mesh);
 
 	//shader = std::make_shared<Shader>(L"Default");
-	shader = std::make_shared<SpecularMappingShader>("2k_earth_daymap.jpg", "2k_earth_specular_map.jpg");
+	shader = std::make_shared<NormalMappingShader>("2k_earth_daymap.jpg", "2k_earth_specular_map.jpg", "2k_earth_normal_map.jpg");
 
 	//std::shared_ptr<Texture> texture = std::make_shared<Texture>("T_coord.png");
 	//std::weak_ptr<Texture> texture;

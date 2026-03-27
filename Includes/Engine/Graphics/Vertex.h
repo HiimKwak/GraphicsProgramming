@@ -14,6 +14,8 @@ namespace Craft
 		Vector3 position;
 		Vector2 texCoord; // texture coordinates, uv coords
 		Vector3 normal;
+		Vector3 tangent;
+		Vector3 bitangent;
 
 		Vertex(
 			const Vector3& position,

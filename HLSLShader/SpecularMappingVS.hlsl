@@ -3,6 +3,8 @@ struct VSInput
     float3 position : POSITION;
     float2 texCoord : TEXCOORD;
     float3 normal : NORMAL;
+    float3 tangent : TANGENT;
+    float3 bitangent : BITANGENT;
 };
 
 cbuffer Transform : register(b0) // local to world
@@ -24,6 +26,8 @@ struct VSOutput
     float3 normal : NORMAL;
     float3 cameraPosition : TEXCOORD1;
     float3 worldPosition : TEXCOORD2;
+    float3 tangent : TANGENT;
+    float3 bitangent : BITANGENT;
 };
 
 VSOutput main(VSInput input)
@@ -36,6 +40,8 @@ VSOutput main(VSInput input)
     output.texCoord = input.texCoord;
     
     output.normal = normalize(mul(input.normal, (float3x3) worldMatrix)); // transform local normal to world normal
+    output.tangent = normalize(mul(input.tangent, (float3x3) worldMatrix)); // transform local normal to world normal
+    output.bitangent = normalize(mul(input.bitangent, (float3x3) worldMatrix)); // transform local normal to world normal
     
     output.cameraPosition = cameraPosition;
     
