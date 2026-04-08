@@ -19,6 +19,7 @@ namespace Craft
 		SafeRelease(context);
 		SafeRelease(swapChain);
 		SafeRelease(renderTargetView);
+		SafeRelease(depthStencilView);
 	}
 
 	void GraphicsContext::Initialize(const Win32Window& window)
@@ -34,15 +35,19 @@ namespace Craft
 
 		CreateRenderTargetView();
 
+		CreateDepthStencilView(width, height);
+
 		context->RSSetViewports(1, &viewport);
 	}
 
 	void GraphicsContext::BeginScene(float red, float green, float blue)
 	{
-		context->OMSetRenderTargets(1, &renderTargetView, nullptr);
+		context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
 		float backgroundColor[4] = { red, green, blue, 1.0f };
 		context->ClearRenderTargetView(renderTargetView, backgroundColor);
+
+		context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
 
 	void GraphicsContext::EndScene(uint32_t vsync)
@@ -58,9 +63,12 @@ namespace Craft
 		context->Flush();
 
 		SafeRelease(renderTargetView);
+		SafeRelease(depthStencilView);
+
 		ThrowIfFailed(swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0), L"Failed to resize swap-chain buffer.");
 
 		CreateRenderTargetView();
+		CreateDepthStencilView(width, height);
 
 		viewport.Width = static_cast<float>(width);
 		viewport.Height = static_cast<float>(height);
@@ -204,5 +212,29 @@ namespace Craft
 		}
 
 		SafeRelease(backbuffer);
+	}
+
+	void GraphicsContext::CreateDepthStencilView(uint32_t width, uint32_t height)
+	{
+		D3D11_TEXTURE2D_DESC depthStencilDesc = {};
+		depthStencilDesc.Width = width;
+		depthStencilDesc.Height = height;
+		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDesc.ArraySize = 1;
+		depthStencilDesc.MipLevels = 1;
+		depthStencilDesc.SampleDesc.Count = 1;
+		depthStencilDesc.SampleDesc.Quality = 0;
+		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+		ID3D11Texture2D* depthStencilTexture = nullptr;
+		ThrowIfFailed(device->CreateTexture2D(&depthStencilDesc, nullptr, &depthStencilTexture), L"Failed to create depth stencil texture");
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+		depthStencilViewDesc.Format = depthStencilDesc.Format;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+		ThrowIfFailed(device->CreateDepthStencilView(depthStencilTexture, &depthStencilViewDesc, &depthStencilView), L"Failed to create depth stencil view");
+
+		SafeRelease(depthStencilTexture);
 	}
 }

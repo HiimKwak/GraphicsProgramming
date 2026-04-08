@@ -13,7 +13,11 @@ void TriangleDemoLevel::OnInitialized()
 	Level::OnInitialized();
 
 	//SpawnActor<TriangleMeshActor>();
-	SpawnActor<QuadMeshActor>();
+	std::shared_ptr<QuadMeshActor> quad = SpawnActor<QuadMeshActor>();
+	quad->transform->position.x = 0.5f;
+
+	std::shared_ptr<QuadMeshActor> quad2 = SpawnActor<QuadMeshActor>();
+	quad2->transform->position.x = -0.5f;
 
 	std::shared_ptr<CameraMovementActor> camera = SpawnActor<CameraMovementActor>();
 	camera->transform->position.z = -2.0f;
