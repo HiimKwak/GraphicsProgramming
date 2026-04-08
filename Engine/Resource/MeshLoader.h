@@ -20,7 +20,7 @@ namespace Craft
 		static MeshLoader& Get();
 
 	private:
-		void LoadMesh(const std::string& name, std::weak_ptr<StaticMesh>& outMesh);
+		void LoadOBJ(const std::string& name, std::weak_ptr<StaticMesh>& outMesh);
 
 	private:
 		std::unordered_map<std::string, std::shared_ptr<StaticMesh>> meshList; // todo: submesh 구현필요

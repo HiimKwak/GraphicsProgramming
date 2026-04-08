@@ -24,10 +24,10 @@ namespace Craft
 			outMesh = result->second;
 			return;
 		}
-		LoadMesh(name, outMesh);
+		LoadOBJ(name, outMesh);
 	}
 
-	void MeshLoader::LoadMesh(const std::string& name, std::weak_ptr<StaticMesh>& outMesh)
+	void MeshLoader::LoadOBJ(const std::string& name, std::weak_ptr<StaticMesh>& outMesh)
 	{
 		std::string path = std::string("../Assets/Meshes/") + name;
 		std::ifstream file(path);
